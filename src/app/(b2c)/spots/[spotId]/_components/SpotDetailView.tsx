@@ -8,7 +8,7 @@ import { BottomCTA } from '@/components/common/BottomCTA';
 import { cn } from '@/lib/utils';
 import { EmptyState } from '@/components/common/EmptyState';
 import { SkeletonText } from '@/components/common/Skeleton';
-import { getOwnerUuid } from '@/lib/uuid';
+import { getClientUuid } from '@/lib/uuid';
 import {
   likeStatusQuery,
   partnerPostsQuery,
@@ -29,7 +29,7 @@ export type SpotDetailViewProps = {
 export function SpotDetailView({ spotId }: SpotDetailViewProps) {
   const router = useRouter();
   const [isCreateOpen, setCreateOpen] = useState(false);
-  const [uuid] = useState(() => getOwnerUuid() ?? '');
+  const [uuid] = useState(() => getClientUuid() ?? '');
   const spot = useQuery(spotQuery(spotId));
   const posts = useQuery(partnerPostsQuery(spotId));
 

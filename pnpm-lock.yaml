@@ -7,6 +7,9 @@ settings:
 importers:
   .:
     dependencies:
+      '@actbase/react-daum-postcode':
+        specifier: ^1.0.4
+        version: 1.0.4
       '@base-ui/react':
         specifier: ^1.4.1
         version: 1.4.1(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
@@ -133,6 +136,12 @@ importers:
         version: 4.1.6(@types/node@20.19.41)(jsdom@29.1.1(@noble/hashes@1.8.0))(msw@2.14.6(@types/node@20.19.41)(typescript@5.9.3))(vite@8.0.13(@types/node@20.19.41)(esbuild@0.27.7)(jiti@2.7.0))
 
 packages:
+  '@actbase/react-daum-postcode@1.0.4':
+    resolution:
+      {
+        integrity: sha512-cTUnwfnKLM9LMh4dBPxbfGeCjpbJQcq/R6oW2aEJO20qz4i8cA7sPf0HkUyYqENfuGFU+vbsSJ8LJwNhTYoFLQ==,
+      }
+
   '@adobe/css-tools@4.4.4':
     resolution:
       {
@@ -7245,6 +7254,8 @@ packages:
         optional: true
 
 snapshots:
+  '@actbase/react-daum-postcode@1.0.4': {}
+
   '@adobe/css-tools@4.4.4': {}
 
   '@alloc/quick-lru@5.2.0': {}
