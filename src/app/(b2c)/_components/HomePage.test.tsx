@@ -203,29 +203,28 @@ describe('HomePage', () => {
       'owner-uuid',
       '11111111-1111-4111-8111-111111111111',
     );
-    apiGet
-      .mockResolvedValueOnce({
-        data: {
-          content: [
-            {
-              id: 7,
-              name: '무장애 배드민턴장',
-              category: 'BADMINTON',
-              image: '/facility.png',
-              region: 'SEOUL',
-              curations: ['NO_STEP_COURT_ENTRY'],
-              matchCount: 1,
-              isLiked: false,
-            },
-          ],
-          currentPage: 0,
-          size: 10,
-          totalElements: 1,
-          totalPages: 1,
-          isFirst: true,
-          isLast: true,
-        },
-      });
+    apiGet.mockResolvedValueOnce({
+      data: {
+        content: [
+          {
+            id: 7,
+            name: '무장애 배드민턴장',
+            category: 'BADMINTON',
+            image: '/facility.png',
+            region: 'SEOUL',
+            curations: ['NO_STEP_COURT_ENTRY'],
+            matchCount: 1,
+            isLiked: false,
+          },
+        ],
+        currentPage: 0,
+        size: 10,
+        totalElements: 1,
+        totalPages: 1,
+        isFirst: true,
+        isLast: true,
+      },
+    });
     apiPost.mockResolvedValueOnce({ data: 'liked' });
 
     renderHome(<HomePage />);
@@ -246,29 +245,28 @@ describe('HomePage', () => {
       'owner-uuid',
       '11111111-1111-4111-8111-111111111111',
     );
-    apiGet
-      .mockResolvedValueOnce({
-        data: {
-          content: [
-            {
-              id: 7,
-              name: '무장애 배드민턴장',
-              category: 'BADMINTON',
-              image: '/facility.png',
-              region: 'SEOUL',
-              curations: ['NO_STEP_COURT_ENTRY'],
-              matchCount: 1,
-              isLiked: true,
-            },
-          ],
-          currentPage: 0,
-          size: 10,
-          totalElements: 1,
-          totalPages: 1,
-          isFirst: true,
-          isLast: true,
-        },
-      });
+    apiGet.mockResolvedValueOnce({
+      data: {
+        content: [
+          {
+            id: 7,
+            name: '무장애 배드민턴장',
+            category: 'BADMINTON',
+            image: '/facility.png',
+            region: 'SEOUL',
+            curations: ['NO_STEP_COURT_ENTRY'],
+            matchCount: 1,
+            isLiked: true,
+          },
+        ],
+        currentPage: 0,
+        size: 10,
+        totalElements: 1,
+        totalPages: 1,
+        isFirst: true,
+        isLast: true,
+      },
+    });
     apiDelete.mockResolvedValueOnce({ data: 'unliked' });
 
     renderHome(<HomePage />);

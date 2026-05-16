@@ -50,7 +50,11 @@ function createHomePageQueryClient() {
           sportName: '배드민턴',
           imageSrc: '/images/home/facility-placeholder.svg',
           imageAlt: '차분한 커뮤니티 코트 이미지',
-          badges: ['quietEnvironment', 'privateSpace', 'professionalInstructor'],
+          badges: [
+            'quietEnvironment',
+            'privateSpace',
+            'professionalInstructor',
+          ],
           isFavorite: false,
         },
       ],
