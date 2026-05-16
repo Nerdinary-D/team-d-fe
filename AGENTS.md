@@ -6,7 +6,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 # AI Agent Rules
 
-아래 컨벤션은 [README.md](../../README.md)의 Conventions 섹션을 참조한다. 여기에는 AI 에이전트가 반드시 지켜야 할 **실행 규칙**만 명시한다.
+아래 컨벤션은 [README.md](./README.md)의 Conventions 섹션을 참조한다. 여기에는 AI 에이전트가 반드시 지켜야 할 **실행 규칙**만 명시한다.
 
 ## 1. 공통 컴포넌트 우선 사용
 

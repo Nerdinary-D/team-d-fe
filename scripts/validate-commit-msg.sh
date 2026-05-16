@@ -9,7 +9,7 @@ if [ -z "$MSG" ]; then
   exit 1
 fi
 
-PATTERN='^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\([a-zA-Z0-9_-]+\))?!?: .{1,100}'
+PATTERN='^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\([a-zA-Z0-9_-]+\))?!?: .{1,100}$'
 
 if ! echo "$MSG" | head -1 | grep -qE "$PATTERN"; then
   echo "❌ 컨벤셔널 커밋 형식이 아닙니다."
