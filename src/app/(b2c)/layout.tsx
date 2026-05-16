@@ -1,4 +1,4 @@
-import { BottomTab } from "@/components/common/BottomTab";
+import { BottomTab } from "@/components/bottomTap/BottomTab";
 
 export default function B2CLayout({
   children,
