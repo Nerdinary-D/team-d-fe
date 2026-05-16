@@ -3,5 +3,5 @@ export default function SpotDetailLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <div className="pb-[120px]">{children}</div>;
+  return <div className="not-only-of-type:">{children}</div>;
 }

@@ -4,7 +4,10 @@ import { useEffect, useRef, useState } from 'react';
 import { cn } from '@/lib/utils';
 
 type KakaoLatLng = object;
-type KakaoMap = object;
+type KakaoMap = {
+  setZoomable: (zoomable: boolean) => void;
+  setDraggable: (draggable: boolean) => void;
+};
 type KakaoMarker = { setMap: (map: KakaoMap | null) => void };
 
 type KakaoMapsSdk = {
@@ -94,13 +97,17 @@ export type SpotMapProps = {
   latitude: number;
   longitude: number;
   level?: number;
+  interactive?: boolean;
+  onClick?: () => void;
   className?: string;
 };
 
 export function SpotMap({
   latitude,
   longitude,
-  level = 3,
+  level = 2,
+  interactive = false,
+  onClick,
   className,
 }: SpotMapProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -117,6 +124,10 @@ export function SpotMap({
         if (cancelled || !containerRef.current) return;
         const center = new maps.LatLng(latitude, longitude);
         const map = new maps.Map(containerRef.current, { center, level });
+        if (!interactive) {
+          map.setZoomable(false);
+          map.setDraggable(false);
+        }
         const marker = new maps.Marker({ position: center });
         marker.setMap(map);
       })
@@ -130,7 +141,7 @@ export function SpotMap({
     return () => {
       cancelled = true;
     };
-  }, [appKey, latitude, longitude, level]);
+  }, [appKey, latitude, longitude, level, interactive]);
 
   const fallbackClassName = cn(
     'flex h-72 items-center justify-center rounded-md border border-dashed px-4 text-center text-sm text-muted-foreground',
@@ -152,9 +163,14 @@ export function SpotMap({
   return (
     <div
       ref={containerRef}
-      role="img"
+      role={onClick ? 'button' : 'img'}
       aria-label="시설 위치 지도"
-      className={cn('h-72 w-full rounded-md border bg-muted', className)}
+      onClick={onClick}
+      className={cn(
+        'h-72 w-full rounded-md border bg-muted',
+        onClick && 'cursor-pointer',
+        className,
+      )}
     />
   );
 }

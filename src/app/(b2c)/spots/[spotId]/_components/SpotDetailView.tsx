@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { BottomCTA } from '@/components/common/BottomCTA';
 import { EmptyState } from '@/components/common/EmptyState';
@@ -17,12 +18,14 @@ export type SpotDetailViewProps = {
 };
 
 export function SpotDetailView({ spotId }: SpotDetailViewProps) {
+  const router = useRouter();
   const spot = useQuery(spotQuery(spotId));
   const posts = useQuery(partnerPostsQuery(spotId));
 
   const handleOpenCreate = () => {
     // TODO(phase4): PartnerPostFormDialog 연결
   };
+  const handleOpenFullMap = () => router.push(`/spots/${spotId}/map`);
 
   if (spot.isLoading || posts.isLoading) {
     return (
@@ -60,7 +63,11 @@ export function SpotDetailView({ spotId }: SpotDetailViewProps) {
         <SpotInfoHeader name={s.name} sport={s.sport} address={s.address} />
         <InfraChipList infraList={s.infraList} />
         <div className="px-4">
-          <SpotMap latitude={s.latitude} longitude={s.longitude} />
+          <SpotMap
+            latitude={s.latitude}
+            longitude={s.longitude}
+            onClick={handleOpenFullMap}
+          />
         </div>
         <PartnerSection posts={postList} />
       </main>
