@@ -49,7 +49,9 @@ describe('OnboardingFunnel', () => {
       'false',
     );
     expect(screen.getByRole('button', { name: '다음' })).toBeDisabled();
-    expect(screen.queryByRole('button', { name: '이전' })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: '이전' }),
+    ).not.toBeInTheDocument();
   });
 
   it('2단계는 처음에 장애 유형과 세부 옵션이 모두 선택되지 않는다', async () => {
@@ -85,7 +87,9 @@ describe('OnboardingFunnel', () => {
       screen.queryByRole('button', { name: '온보딩 문구' }),
     ).not.toBeInTheDocument();
     expect(screen.getByRole('button', { name: '다음' })).toBeDisabled();
-    expect(screen.queryByRole('button', { name: '이전' })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: '이전' }),
+    ).not.toBeInTheDocument();
   });
 
   it('장애 유형과 세부사항을 하나 이상 선택해야 다음으로 넘어간다', async () => {
@@ -107,7 +111,9 @@ describe('OnboardingFunnel', () => {
 
     expect(screen.getByRole('button', { name: '다음' })).toBeDisabled();
 
-    await user.click(screen.getByRole('button', { name: '단차 없는 휠체어 진입' }));
+    await user.click(
+      screen.getByRole('button', { name: '단차 없는 휠체어 진입' }),
+    );
 
     expect(screen.getByRole('button', { name: '다음' })).toBeEnabled();
   });
@@ -146,7 +152,9 @@ describe('OnboardingFunnel', () => {
     ).toBeInTheDocument();
     expect(screen.getByRole('button', { name: '다음' })).toBeDisabled();
 
-    await user.click(screen.getByRole('button', { name: '필담 보드 또는 소통용 태블릿 기기' }));
+    await user.click(
+      screen.getByRole('button', { name: '필담 보드 또는 소통용 태블릿 기기' }),
+    );
 
     expect(screen.getByRole('button', { name: '다음' })).toBeEnabled();
 
@@ -200,7 +208,9 @@ describe('OnboardingFunnel', () => {
         name: '단순하고 직관적인 반복 동작 중심의 운동',
       }),
     ).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: '저자극 공간' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: '저자극 공간' }),
+    ).toBeInTheDocument();
     expect(
       screen.getByRole('button', { name: '타인과 분리된 독립 공간' }),
     ).toBeInTheDocument();
@@ -218,7 +228,9 @@ describe('OnboardingFunnel', () => {
     await user.click(screen.getByRole('button', { name: '사용자 모드' }));
     await user.click(screen.getByRole('button', { name: '다음' }));
     await user.click(screen.getByRole('button', { name: '지체 장애' }));
-    await user.click(screen.getByRole('button', { name: '단차 없는 휠체어 진입' }));
+    await user.click(
+      screen.getByRole('button', { name: '단차 없는 휠체어 진입' }),
+    );
     await user.click(screen.getByRole('button', { name: '다음' }));
 
     expect(screen.getByLabelText('3/3 단계')).toBeInTheDocument();
@@ -241,7 +253,9 @@ describe('OnboardingFunnel', () => {
     await user.click(screen.getByRole('button', { name: '사용자 모드' }));
     await user.click(screen.getByRole('button', { name: '다음' }));
     await user.click(screen.getByRole('button', { name: '지체 장애' }));
-    await user.click(screen.getByRole('button', { name: '단차 없는 휠체어 진입' }));
+    await user.click(
+      screen.getByRole('button', { name: '단차 없는 휠체어 진입' }),
+    );
     await user.click(screen.getByRole('button', { name: '다음' }));
     await user.type(
       screen.getByPlaceholderText('닉네임을 입력하세요.'),

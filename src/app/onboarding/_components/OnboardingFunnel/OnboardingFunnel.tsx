@@ -39,8 +39,9 @@ export function OnboardingFunnel() {
 
   const handleDisabilitySelect = (disabilityType: string) => {
     const optionRequirementIds =
-      DISABILITY_OPTIONS.find((option) => option.id === disabilityType)
-        ?.requirements.map((requirement) => requirement.id) ?? [];
+      DISABILITY_OPTIONS.find(
+        (option) => option.id === disabilityType,
+      )?.requirements.map((requirement) => requirement.id) ?? [];
 
     setFormState((current) => {
       const currentDisabilityTypes = current.disabilityTypes ?? [];
@@ -49,7 +50,9 @@ export function OnboardingFunnel() {
         ? currentDisabilityTypes.filter((id) => id !== disabilityType)
         : [...currentDisabilityTypes, disabilityType];
       const requirements = isSelected
-        ? current.requirements.filter((id) => !optionRequirementIds.includes(id))
+        ? current.requirements.filter(
+            (id) => !optionRequirementIds.includes(id),
+          )
         : current.requirements;
 
       return {
