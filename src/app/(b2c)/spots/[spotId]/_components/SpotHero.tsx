@@ -1,6 +1,8 @@
 'use client';
 
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { Button } from '@/components/common/Button';
 import { cn } from '@/lib/utils';
 
 export type SpotHeroProps = {
@@ -8,7 +10,6 @@ export type SpotHeroProps = {
   alt: string;
   dotsCount?: number;
   activeIndex?: number;
-  onBack?: () => void;
   className?: string;
 };
 
@@ -17,9 +18,10 @@ export function SpotHero({
   alt,
   dotsCount = 3,
   activeIndex = 0,
-  onBack,
   className,
 }: SpotHeroProps) {
+  const router = useRouter();
+
   const dots = Array.from({ length: dotsCount }, (_, i) => (
     <span
       key={i}
@@ -31,16 +33,17 @@ export function SpotHero({
     />
   ));
 
-  const backButton = onBack ? (
-    <button
-      type="button"
-      onClick={onBack}
+  const backButton = (
+    <Button
+      variant="icon"
+      size="icon"
+      onClick={() => router.back()}
       aria-label="뒤로 가기"
-      className="absolute left-4 top-[73px] flex h-8 w-8 items-center justify-center rounded-full bg-black/30"
+      className="absolute top-7 left-4"
     >
       <Image src="/icons/back.svg" alt="" width={24} height={24} />
-    </button>
-  ) : null;
+    </Button>
+  );
 
   return (
     <div className={cn('relative h-[260px] w-full overflow-hidden', className)}>

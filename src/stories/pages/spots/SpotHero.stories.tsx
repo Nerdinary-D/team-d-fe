@@ -10,7 +10,6 @@ const meta = {
     alt: sampleSpot.name,
     dotsCount: 3,
     activeIndex: 0,
-    onBack: () => {},
   },
 } satisfies Meta<typeof SpotHero>;
 
@@ -23,11 +22,5 @@ export const Default: Story = {};
 export const SecondSlide: Story = {
   args: {
     activeIndex: 1,
-  },
-};
-
-export const NoBackButton: Story = {
-  args: {
-    onBack: undefined,
   },
 };

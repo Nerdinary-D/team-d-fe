@@ -1,7 +1,6 @@
 'use client';
 
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { BottomCTA } from '@/components/common/BottomCTA';
 import { EmptyState } from '@/components/common/EmptyState';
@@ -18,12 +17,9 @@ export type SpotDetailViewProps = {
 };
 
 export function SpotDetailView({ spotId }: SpotDetailViewProps) {
-  const router = useRouter();
-
   const spot = useQuery(spotQuery(spotId));
   const posts = useQuery(partnerPostsQuery(spotId));
 
-  const handleBack = () => router.back();
   const handleOpenCreate = () => {
     // TODO(phase4): PartnerPostFormDialog 연결
   };
@@ -60,7 +56,7 @@ export function SpotDetailView({ spotId }: SpotDetailViewProps) {
   return (
     <>
       <main className="flex flex-col gap-[20px]">
-        <SpotHero imageUrl={s.imageUrl} alt={s.name} onBack={handleBack} />
+        <SpotHero imageUrl={s.imageUrl} alt={s.name} />
         <SpotInfoHeader name={s.name} sport={s.sport} address={s.address} />
         <InfraChipList infraList={s.infraList} />
         <div className="px-4">
