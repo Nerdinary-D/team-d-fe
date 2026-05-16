@@ -62,7 +62,7 @@ export const Textfield = forwardRef<HTMLInputElement, TextfieldProps>(
     ) : null;
 
     const textfield = (
-      <div className="flex flex-col gap-1.5">
+      <div className="-mx-1 flex flex-col gap-1.5 px-1">
         {labelElement}
         {inputElement}
         {messageElement}
