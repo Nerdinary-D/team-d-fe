@@ -2,8 +2,8 @@
 
 import { PageContainer } from '@/components/common/PageContainer';
 import { useState } from 'react';
+import { LocationSelector } from '@/components/common/LocationSelector';
 import { FacilityCard } from './FacilityCard';
-import { LocationSelector } from './LocationSelector';
 import type { FacilityBadgeVariant } from './FacilityBadge';
 
 type HomeFacility = {
