@@ -5,8 +5,3 @@ export const api = axios.create({
   timeout: 10_000,
   headers: { "Content-Type": "application/json" },
 });
-
-api.interceptors.response.use(
-  (response) => response,
-  (error) => Promise.reject(error),
-);

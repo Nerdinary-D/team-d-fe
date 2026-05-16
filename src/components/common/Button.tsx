@@ -70,13 +70,6 @@ export function Button({
     />
   ) : null;
 
-  const content = (
-    <>
-      {spinner}
-      {children}
-    </>
-  );
-
   return (
     <ButtonPrimitive
       data-slot="button"
@@ -88,7 +81,8 @@ export function Button({
       )}
       {...props}
     >
-      {content}
+      {spinner}
+      {children}
     </ButtonPrimitive>
   );
 }
