@@ -1,4 +1,5 @@
 import { queryOptions } from '@tanstack/react-query';
+import { LOCATION_LABEL_TO_REGION } from '@/api/customer-preferences';
 import { api } from '@/lib/axios';
 
 // ──────────────────────────────────────────────
@@ -36,12 +37,6 @@ type MatePagedResponse = {
   isLast: boolean;
 };
 
-// 도시명 ↔ 백엔드 Region enum 매핑
-const REGION_BY_CITY: Record<string, string> = {
-  서울: 'SEOUL',
-  부산: 'BUSAN',
-};
-
 // ──────────────────────────────────────────────
 // HTTP calls
 // ──────────────────────────────────────────────
@@ -69,10 +64,9 @@ async function fetchMatePosts(city: string): Promise<MatePost[]> {
     },
   });
 
-  const targetRegion = REGION_BY_CITY[city];
+  const targetRegion = LOCATION_LABEL_TO_REGION[city];
   const posts = data.content.map(toMatePost);
 
-  // 백엔드가 region 별 필터를 지원하기 전까지 클라이언트에서 필터.
   if (!targetRegion) return posts;
   return posts.filter((post) => post.city === targetRegion);
 }
