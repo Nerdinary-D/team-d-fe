@@ -77,7 +77,9 @@ describe('MyPageView', () => {
     apiGet.mockReset();
     apiGet.mockResolvedValue(createLikesMeResponse());
     apiPatch.mockReset();
-    apiPatch.mockResolvedValue({ data: { region: 'BUSAN' } });
+    apiPatch.mockResolvedValue({
+      data: { uuid: ownerUuid, updatedAt: '2026-05-16T21:28:35.380865' },
+    });
     window.localStorage.setItem('owner-uuid', ownerUuid);
   });
 
@@ -254,7 +256,7 @@ describe('MyPageView', () => {
   it('필터 변경 다음 버튼을 누르면 고객 큐레이션 PATCH를 호출하고 닫는다', async () => {
     const user = userEvent.setup();
     apiPatch.mockResolvedValueOnce({
-      data: { curations: ['GUIDE_DOG_ALLOWED'] },
+      data: { uuid: ownerUuid, updatedAt: '2026-05-16T21:29:39.519479' },
     });
     renderMyPageView();
 

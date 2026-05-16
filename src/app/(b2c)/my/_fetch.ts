@@ -52,7 +52,8 @@ export type UpdateCustomerRegionPayload = {
 };
 
 export type UpdateCustomerRegionResult = {
-  region: CustomerRegion;
+  updatedAt: string;
+  uuid: string;
 };
 
 export type UpdateCustomerCurationsPayload = {
@@ -60,7 +61,8 @@ export type UpdateCustomerCurationsPayload = {
 };
 
 export type UpdateCustomerCurationsResult = {
-  curations: Curation[];
+  updatedAt: string;
+  uuid: string;
 };
 
 // ──────────────────────────────────────────────

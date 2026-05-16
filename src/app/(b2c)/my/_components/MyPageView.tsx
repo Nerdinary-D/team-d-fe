@@ -80,8 +80,8 @@ export function MyPageView({
     updateRegion.mutate(
       { region },
       {
-        onSuccess: (result) => {
-          setCurrentLocation(REGION_TO_LOCATION_LABEL[result.region]);
+        onSuccess: () => {
+          setCurrentLocation(REGION_TO_LOCATION_LABEL[region]);
           toast.success('지역 설정이 완료되었어요!');
         },
         onError: (error) => {
