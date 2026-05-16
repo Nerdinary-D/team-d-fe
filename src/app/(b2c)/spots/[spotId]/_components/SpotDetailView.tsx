@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
-import { BottomCTA } from "@/components/common/BottomCTA";
-import { EmptyState } from "@/components/common/EmptyState";
-import { SkeletonText } from "@/components/common/Skeleton";
-import { partnerPostsQuery, spotQuery } from "../_fetch";
-import { InfraChipList } from "./InfraChipList";
-import { PartnerSection } from "./PartnerSection";
-import { SpotHero } from "./SpotHero";
-import { SpotInfoHeader } from "./SpotInfoHeader";
-import { SpotMap } from "./SpotMap";
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { useQuery } from '@tanstack/react-query';
+import { BottomCTA } from '@/components/common/BottomCTA';
+import { EmptyState } from '@/components/common/EmptyState';
+import { SkeletonText } from '@/components/common/Skeleton';
+import { partnerPostsQuery, spotQuery } from '../_fetch';
+import { InfraChipList } from './InfraChipList';
+import { PartnerSection } from './PartnerSection';
+import { SpotHero } from './SpotHero';
+import { SpotInfoHeader } from './SpotInfoHeader';
+import { SpotMap } from './SpotMap';
 
 export type SpotDetailViewProps = {
   spotId: string;

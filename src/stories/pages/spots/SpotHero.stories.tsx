@@ -1,9 +1,9 @@
-import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import { SpotHero } from "@/app/(b2c)/spots/[spotId]/_components/SpotHero";
-import { sampleSpot } from "./fixtures";
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
+import { SpotHero } from '@/app/(b2c)/spots/[spotId]/_components/SpotHero';
+import { sampleSpot } from './fixtures';
 
 const meta = {
-  title: "Pages/Spots/SpotHero",
+  title: 'Pages/Spots/SpotHero',
   component: SpotHero,
   args: {
     imageUrl: sampleSpot.imageUrl,

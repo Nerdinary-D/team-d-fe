@@ -46,13 +46,14 @@ async function createMatch(payload: CreateMatchPayload) {
 }
 
 async function fetchHealth(): Promise<HealthCheck> {
-  const response = await api.get<string>("/health", {
-    responseType: "text",
+  const response = await api.get<string>('/health', {
+    responseType: 'text',
     transformResponse: (raw) => raw,
   });
   return {
-    message: typeof response.data === "string" ? response.data : String(response.data),
-    baseURL: String(response.config.baseURL ?? ""),
+    message:
+      typeof response.data === 'string' ? response.data : String(response.data),
+    baseURL: String(response.config.baseURL ?? ''),
   };
 }
 
@@ -75,7 +76,7 @@ export const matchQuery = (id: string) =>
 
 export const healthQuery = () =>
   queryOptions({
-    queryKey: ["health"] as const,
+    queryKey: ['health'] as const,
     queryFn: fetchHealth,
     staleTime: 0,
     retry: false,

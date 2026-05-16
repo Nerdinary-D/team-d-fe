@@ -1,13 +1,13 @@
-import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import { PlusIcon } from "lucide-react";
-import { BottomCTA } from "@/components/common/BottomCTA";
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
+import { PlusIcon } from 'lucide-react';
+import { BottomCTA } from '@/components/common/BottomCTA';
 
 const meta = {
-  title: "Common/BottomCTA",
+  title: 'Common/BottomCTA',
   component: BottomCTA,
   args: {
     onClick: () => {},
-    children: "모집글 등록하기",
+    children: '모집글 등록하기',
   },
   decorators: [
     (Story) => (
@@ -36,6 +36,6 @@ export const WithIcon: Story = {
 export const Disabled: Story = {
   args: {
     disabled: true,
-    children: "비활성 상태",
+    children: '비활성 상태',
   },
 };

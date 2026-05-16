@@ -1,5 +1,5 @@
-import Image from "next/image";
-import { cn } from "@/lib/utils";
+import Image from 'next/image';
+import { cn } from '@/lib/utils';
 
 export type SpotInfoHeaderProps = {
   name: string;
@@ -40,7 +40,7 @@ export function SpotInfoHeader({
   );
 
   return (
-    <section className={cn("flex flex-col gap-[7px]", className)}>
+    <section className={cn('flex flex-col gap-[7px]', className)}>
       {title}
       {sportLine}
       {addressLine}

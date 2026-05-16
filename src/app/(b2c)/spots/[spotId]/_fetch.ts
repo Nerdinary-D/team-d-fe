@@ -2,18 +2,14 @@ import {
   queryOptions,
   useMutation,
   useQueryClient,
-} from "@tanstack/react-query";
+} from '@tanstack/react-query';
 import {
   addMockPartnerPost,
   generateMockPostId,
   getMockPartnerPosts,
   getMockSpot,
-} from "./_mock";
-import type {
-  CreatePartnerPostInput,
-  PartnerPost,
-  Spot,
-} from "./_schema";
+} from './_mock';
+import type { CreatePartnerPostInput, PartnerPost, Spot } from './_schema';
 
 // ──────────────────────────────────────────────
 // Types
@@ -62,14 +58,14 @@ async function postPartnerPost(
 
 export const spotQuery = (spotId: string) =>
   queryOptions({
-    queryKey: ["spots", "detail", spotId] as const,
+    queryKey: ['spots', 'detail', spotId] as const,
     queryFn: () => fetchSpot(spotId),
     enabled: Boolean(spotId),
   });
 
 export const partnerPostsQuery = (spotId: string) =>
   queryOptions({
-    queryKey: ["spots", spotId, "partner-posts"] as const,
+    queryKey: ['spots', spotId, 'partner-posts'] as const,
     queryFn: () => fetchPartnerPosts(spotId),
     enabled: Boolean(spotId),
   });

@@ -1,6 +1,6 @@
-import { cn } from "@/lib/utils";
-import type { PartnerPost } from "../_schema";
-import { PartnerPostCard } from "./PartnerPostCard";
+import { cn } from '@/lib/utils';
+import type { PartnerPost } from '../_schema';
+import { PartnerPostCard } from './PartnerPostCard';
 
 export type PartnerSectionProps = {
   posts: PartnerPost[];
@@ -26,7 +26,7 @@ export function PartnerSection({ posts, className }: PartnerSectionProps) {
     );
 
   return (
-    <section className={cn("flex flex-col gap-[14px] px-4", className)}>
+    <section className={cn('flex flex-col gap-[14px] px-4', className)}>
       {heading}
       {body}
     </section>

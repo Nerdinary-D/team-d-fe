@@ -1,10 +1,15 @@
-"use client";
+'use client';
 
-import { useQuery } from "@tanstack/react-query";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/common/Card";
-import { Button } from "@/components/common/Button";
-import { cn } from "@/lib/utils";
-import { healthQuery } from "../_fetch";
+import { useQuery } from '@tanstack/react-query';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@/components/common/Card';
+import { Button } from '@/components/common/Button';
+import { cn } from '@/lib/utils';
+import { healthQuery } from '../_fetch';
 
 export function HealthCheckPanel() {
   const { data, isFetching, isError, error, refetch, dataUpdatedAt } =
@@ -27,13 +32,15 @@ export function HealthCheckPanel() {
     if (isError) {
       return (
         <p className="text-sm text-red-500">
-          {error instanceof Error ? error.message : "알 수 없는 오류"}
+          {error instanceof Error ? error.message : '알 수 없는 오류'}
         </p>
       );
     }
 
     if (!data) {
-      return <p className="text-sm text-muted-foreground">아직 호출하지 않음</p>;
+      return (
+        <p className="text-sm text-muted-foreground">아직 호출하지 않음</p>
+      );
     }
 
     return (
@@ -43,11 +50,11 @@ export function HealthCheckPanel() {
           <code className="rounded bg-muted px-1.5 py-0.5">{data.message}</code>
         </p>
         <p className="text-xs text-muted-foreground">
-          baseURL: {data.baseURL || "(unset)"}
+          baseURL: {data.baseURL || '(unset)'}
         </p>
         {dataUpdatedAt > 0 ? (
           <p className="text-xs text-muted-foreground">
-            마지막 응답: {new Date(dataUpdatedAt).toLocaleTimeString("ko-KR")}
+            마지막 응답: {new Date(dataUpdatedAt).toLocaleTimeString('ko-KR')}
           </p>
         ) : null}
       </div>
@@ -55,7 +62,7 @@ export function HealthCheckPanel() {
   })();
 
   return (
-    <Card size="sm" className={cn("mb-4")}>
+    <Card size="sm" className={cn('mb-4')}>
       <CardHeader>
         <CardTitle className="flex items-center justify-between text-sm">
           <span>GET /health</span>

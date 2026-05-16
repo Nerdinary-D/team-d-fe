@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import { cn } from "@/lib/utils";
+import Image from 'next/image';
+import { cn } from '@/lib/utils';
 
 export type SpotHeroProps = {
   imageUrl: string;
@@ -25,8 +25,8 @@ export function SpotHero({
       key={i}
       aria-hidden
       className={cn(
-        "h-2 w-2 rounded-full",
-        i === activeIndex ? "bg-main" : "bg-white/60",
+        'h-2 w-2 rounded-full',
+        i === activeIndex ? 'bg-main' : 'bg-white/60',
       )}
     />
   ));
@@ -43,7 +43,7 @@ export function SpotHero({
   ) : null;
 
   return (
-    <div className={cn("relative h-[260px] w-full overflow-hidden", className)}>
+    <div className={cn('relative h-[260px] w-full overflow-hidden', className)}>
       <Image
         src={imageUrl}
         alt={alt}

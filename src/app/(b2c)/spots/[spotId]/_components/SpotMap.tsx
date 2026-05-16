@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useEffect, useRef, useState } from "react";
-import { cn } from "@/lib/utils";
+import { useEffect, useRef, useState } from 'react';
+import { cn } from '@/lib/utils';
 
 type KakaoLatLng = object;
 type KakaoMap = object;
@@ -29,8 +29,8 @@ function loadKakaoMapSdk(appKey: string): Promise<KakaoMapsSdk> {
   if (sdkPromise) return sdkPromise;
 
   sdkPromise = new Promise((resolve, reject) => {
-    if (typeof window === "undefined") {
-      reject(new Error("Kakao Map SDK는 브라우저에서만 로드할 수 있습니다."));
+    if (typeof window === 'undefined') {
+      reject(new Error('Kakao Map SDK는 브라우저에서만 로드할 수 있습니다.'));
       return;
     }
 
@@ -38,7 +38,11 @@ function loadKakaoMapSdk(appKey: string): Promise<KakaoMapsSdk> {
       const maps = window.kakao?.maps;
       if (!maps) {
         sdkPromise = null;
-        reject(new Error("Kakao Map SDK는 로드됐지만 window.kakao.maps 가 없습니다."));
+        reject(
+          new Error(
+            'Kakao Map SDK는 로드됐지만 window.kakao.maps 가 없습니다.',
+          ),
+        );
         return;
       }
       maps.load(() => resolve(maps));
@@ -53,30 +57,30 @@ function loadKakaoMapSdk(appKey: string): Promise<KakaoMapsSdk> {
       "script[data-kakao-map-sdk='true']",
     );
     if (existing) {
-      existing.addEventListener("load", ready, { once: true });
+      existing.addEventListener('load', ready, { once: true });
       existing.addEventListener(
-        "error",
+        'error',
         () => {
           sdkPromise = null;
-          reject(new Error("Kakao Map SDK 로드 실패"));
+          reject(new Error('Kakao Map SDK 로드 실패'));
         },
         { once: true },
       );
       return;
     }
 
-    const script = document.createElement("script");
+    const script = document.createElement('script');
     script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${encodeURIComponent(
       appKey,
     )}&autoload=false`;
     script.async = true;
-    script.dataset.kakaoMapSdk = "true";
-    script.addEventListener("load", ready, { once: true });
+    script.dataset.kakaoMapSdk = 'true';
+    script.addEventListener('load', ready, { once: true });
     script.addEventListener(
-      "error",
+      'error',
       () => {
         sdkPromise = null;
-        reject(new Error("Kakao Map SDK 로드 실패"));
+        reject(new Error('Kakao Map SDK 로드 실패'));
       },
       { once: true },
     );
@@ -118,7 +122,9 @@ export function SpotMap({
       })
       .catch((e: unknown) => {
         if (cancelled) return;
-        setError(e instanceof Error ? e.message : "지도를 불러오지 못했습니다.");
+        setError(
+          e instanceof Error ? e.message : '지도를 불러오지 못했습니다.',
+        );
       });
 
     return () => {
@@ -127,7 +133,7 @@ export function SpotMap({
   }, [appKey, latitude, longitude, level]);
 
   const fallbackClassName = cn(
-    "flex h-72 items-center justify-center rounded-md border border-dashed px-4 text-center text-sm text-muted-foreground",
+    'flex h-72 items-center justify-center rounded-md border border-dashed px-4 text-center text-sm text-muted-foreground',
     className,
   );
 
@@ -148,7 +154,7 @@ export function SpotMap({
       ref={containerRef}
       role="img"
       aria-label="시설 위치 지도"
-      className={cn("h-72 w-full rounded-md border bg-muted", className)}
+      className={cn('h-72 w-full rounded-md border bg-muted', className)}
     />
   );
 }
