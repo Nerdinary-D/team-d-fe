@@ -18,22 +18,25 @@ export type SpotHeroProps = {
 export function SpotHero({
   imageUrl,
   alt,
-  dotsCount = 3,
+  dotsCount = 1,
   activeIndex = 0,
   isLiked = false,
   onToggleLike,
   className,
 }: SpotHeroProps) {
-  const dots = Array.from({ length: dotsCount }, (_, i) => (
-    <span
-      key={i}
-      aria-hidden
-      className={cn(
-        'h-2 w-2 rounded-full',
-        i === activeIndex ? 'bg-main' : 'bg-white/60',
-      )}
-    />
-  ));
+  const dots =
+    dotsCount > 1
+      ? Array.from({ length: dotsCount }, (_, i) => (
+          <span
+            key={i}
+            aria-hidden
+            className={cn(
+              'h-2 w-2 rounded-full',
+              i === activeIndex ? 'bg-main' : 'bg-white/60',
+            )}
+          />
+        ))
+      : null;
 
   return (
     <div className={cn('relative h-[260px] w-full overflow-hidden', className)}>
@@ -52,9 +55,11 @@ export function SpotHero({
         onToggleLike={onToggleLike}
         className="absolute top-7 right-4"
       />
-      <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-[10px]">
-        {dots}
-      </div>
+      {dots ? (
+        <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-[10px]">
+          {dots}
+        </div>
+      ) : null}
     </div>
   );
 }

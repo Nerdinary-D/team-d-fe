@@ -8,7 +8,13 @@ import { BottomCTA } from '@/components/common/BottomCTA';
 import { cn } from '@/lib/utils';
 import { EmptyState } from '@/components/common/EmptyState';
 import { SkeletonText } from '@/components/common/Skeleton';
-import { partnerPostsQuery, spotQuery } from '../_fetch';
+import { getOwnerUuid } from '@/lib/uuid';
+import {
+  likeStatusQuery,
+  partnerPostsQuery,
+  spotQuery,
+  useToggleLike,
+} from '../_fetch';
 import { InfraChipList } from './InfraChipList';
 import { PartnerPostFormDialog } from './PartnerPostFormDialog';
 import { PartnerSection } from './PartnerSection';
@@ -23,11 +29,20 @@ export type SpotDetailViewProps = {
 export function SpotDetailView({ spotId }: SpotDetailViewProps) {
   const router = useRouter();
   const [isCreateOpen, setCreateOpen] = useState(false);
+  const [uuid] = useState(() => getOwnerUuid() ?? '');
   const spot = useQuery(spotQuery(spotId));
   const posts = useQuery(partnerPostsQuery(spotId));
 
+  const facilityId = Number(spot.data?.id) || 0;
+  const likeStatus = useQuery(likeStatusQuery(uuid, facilityId));
+  const toggleLike = useToggleLike(uuid, facilityId);
+
   const handleOpenCreate = () => setCreateOpen(true);
   const handleOpenFullMap = () => router.push(`/spots/${spotId}/map`);
+  const handleToggleLike = () => {
+    if (!uuid || facilityId <= 0 || toggleLike.isPending) return;
+    toggleLike.mutate(likeStatus.data?.isLiked ?? false);
+  };
 
   if (spot.isLoading || posts.isLoading) {
     return (
@@ -66,7 +81,12 @@ export function SpotDetailView({ spotId }: SpotDetailViewProps) {
 
   const header = (
     <header className="sticky top-0 z-10 flex flex-col gap-[20px] bg-white">
-      <SpotHero imageUrl={s.imageUrl} alt={s.name} />
+      <SpotHero
+        imageUrl={s.imageUrl}
+        alt={s.name}
+        isLiked={likeStatus.data?.isLiked ?? false}
+        onToggleLike={handleToggleLike}
+      />
       <SpotInfoHeader name={s.name} sport={s.sport} address={s.address} />
       <div
         aria-hidden
