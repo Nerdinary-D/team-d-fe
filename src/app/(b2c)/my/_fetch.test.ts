@@ -6,6 +6,7 @@ describe('likesMeItemToFavoriteFacility', () => {
     expect(
       likesMeItemToFavoriteFacility({
         uuid: 'facility-uuid-1',
+        facilityId: 1,
         image: '/facility.png',
         name: '서울 배드민턴장',
         category: 'BADMINTON',
@@ -13,7 +14,7 @@ describe('likesMeItemToFavoriteFacility', () => {
         isLiked: true,
       }),
     ).toEqual({
-      id: 'facility-uuid-1',
+      id: '1',
       name: '서울 배드민턴장',
       sportName: '배드민턴',
       imageSrc: '/facility.png',
@@ -27,6 +28,7 @@ describe('likesMeItemToFavoriteFacility', () => {
     expect(
       likesMeItemToFavoriteFacility({
         uuid: 'facility-uuid-2',
+        facilityId: 2,
         image: '',
         name: '새 종목 시설',
         category: 'NEW_SPORT',
@@ -34,7 +36,7 @@ describe('likesMeItemToFavoriteFacility', () => {
         isLiked: false,
       }),
     ).toEqual({
-      id: 'facility-uuid-2',
+      id: '2',
       name: '새 종목 시설',
       sportName: 'NEW_SPORT',
       imageSrc: '/images/home/facility-placeholder.svg',

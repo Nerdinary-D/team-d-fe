@@ -24,6 +24,7 @@ export type LikedFacility = {
 
 export type LikesMeItem = {
   uuid: string;
+  facilityId: number;
   image: string;
   name: string;
   category: string;
@@ -132,7 +133,7 @@ export function likesMeItemToFavoriteFacility(
     .filter((badge): badge is FacilityBadgeVariant => Boolean(badge));
 
   return {
-    id: item.uuid,
+    id: String(item.facilityId),
     name: item.name,
     sportName: CATEGORY_LABEL[item.category] ?? item.category,
     imageSrc: item.image || '/images/home/facility-placeholder.svg',

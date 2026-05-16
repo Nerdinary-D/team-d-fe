@@ -36,6 +36,7 @@ function createLikesMeResponse(content = [createLikedFacilityResponse()]) {
 function createLikedFacilityResponse() {
   return {
     uuid: 'facility-uuid-1',
+    facilityId: 1,
     image: '/facility.png',
     name: '서울 배드민턴장',
     category: 'BADMINTON',
