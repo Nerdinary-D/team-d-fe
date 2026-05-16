@@ -35,7 +35,9 @@ export function PostCard({
     </div>
   );
 
-  const scheduleLine = <p className="text-subtitle2 text-gray-500">{schedule}</p>;
+  const scheduleLine = (
+    <p className="text-subtitle2 text-gray-500">{schedule}</p>
+  );
 
   const contentLine = (
     <p className="text-subtitle2 line-clamp-3 text-gray-400">{content}</p>
