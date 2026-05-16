@@ -3,12 +3,14 @@ export default function B2CLayout({
   tab,
 }: {
   children: React.ReactNode;
-  tab: React.ReactNode;
+  tab?: React.ReactNode;
 }) {
-  return (
+  const layout = (
     <div className="flex min-h-svh flex-col">
       <div className="flex-1 pb-[90px]">{children}</div>
       {tab}
     </div>
   );
+
+  return layout;
 }

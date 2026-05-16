@@ -10,11 +10,15 @@ const meta = {
     children: '모집글 등록하기',
   },
   decorators: [
-    (Story) => (
-      <div className="relative h-[200px] w-full bg-gray-100">
-        <Story />
-      </div>
-    ),
+    (Story) => {
+      const storyWrapper = (
+        <div className="relative h-[200px] w-full bg-gray-100">
+          <Story />
+        </div>
+      );
+
+      return storyWrapper;
+    },
   ],
 } satisfies Meta<typeof BottomCTA>;
 
@@ -25,12 +29,16 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {};
 
 export const WithIcon: Story = {
-  render: () => (
-    <BottomCTA onClick={() => {}}>
-      <PlusIcon className="size-6" />
-      <span className="text-subtitle2">모집글 등록하기</span>
-    </BottomCTA>
-  ),
+  render: () => {
+    const story = (
+      <BottomCTA onClick={() => {}}>
+        <PlusIcon className="size-6" />
+        <span className="text-subtitle2">모집글 등록하기</span>
+      </BottomCTA>
+    );
+
+    return story;
+  },
 };
 
 export const Disabled: Story = {
