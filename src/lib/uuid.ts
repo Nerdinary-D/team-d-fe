@@ -1,5 +1,10 @@
-const OWNER_UUID_STORAGE_KEY = 'owner-uuid';
-export const OWNER_UUID_CHANGE_EVENT = 'owner-uuid:change';
+const CLIENT_UUID_STORAGE_KEY = 'client-uuid';
+const LEGACY_OWNER_UUID_STORAGE_KEY = 'owner-uuid';
+
+export const CLIENT_UUID_CHANGE_EVENT = 'client-uuid:change';
+
+/** @deprecated Use CLIENT_UUID_CHANGE_EVENT instead. */
+export const OWNER_UUID_CHANGE_EVENT = CLIENT_UUID_CHANGE_EVENT;
 
 /**
  * v4 UUID 생성.
@@ -39,47 +44,76 @@ function isBrowser() {
   return typeof window !== 'undefined';
 }
 
-/** localStorage 에 저장된 owner uuid 조회. 없으면 null. */
-export function getOwnerUuid(): string | null {
+function dispatchClientUuidChange() {
+  window.dispatchEvent(new Event(CLIENT_UUID_CHANGE_EVENT));
+}
+
+/** localStorage 에 저장된 앱 전역 client uuid 조회. 없으면 null. */
+export function getClientUuid(): string | null {
   if (!isBrowser()) return null;
   try {
-    return window.localStorage.getItem(OWNER_UUID_STORAGE_KEY);
+    const current = window.localStorage.getItem(CLIENT_UUID_STORAGE_KEY);
+    if (current) return current;
+
+    const legacyOwnerUuid = window.localStorage.getItem(
+      LEGACY_OWNER_UUID_STORAGE_KEY,
+    );
+    if (!legacyOwnerUuid) return null;
+
+    window.localStorage.setItem(CLIENT_UUID_STORAGE_KEY, legacyOwnerUuid);
+    window.localStorage.removeItem(LEGACY_OWNER_UUID_STORAGE_KEY);
+
+    return legacyOwnerUuid;
   } catch {
     return null;
   }
 }
 
-/** owner uuid 를 localStorage 에 저장. 같은 탭 구독자에게 변경 이벤트도 발행. */
-export function setOwnerUuid(uuid: string): void {
+/** client uuid 를 localStorage 에 저장. 같은 탭 구독자에게 변경 이벤트도 발행. */
+export function setClientUuid(uuid: string): void {
   if (!isBrowser()) return;
   try {
-    window.localStorage.setItem(OWNER_UUID_STORAGE_KEY, uuid);
-    window.dispatchEvent(new Event(OWNER_UUID_CHANGE_EVENT));
+    window.localStorage.setItem(CLIENT_UUID_STORAGE_KEY, uuid);
+    window.localStorage.removeItem(LEGACY_OWNER_UUID_STORAGE_KEY);
+    dispatchClientUuidChange();
   } catch {
     // storage quota / private mode 등은 무시
   }
 }
 
 /**
- * 저장된 owner uuid 가 없으면 새로 생성해서 저장한 뒤 반환.
+ * 저장된 client uuid 가 없으면 새로 생성해서 저장한 뒤 반환.
  * 서버 환경에서는 빈 문자열을 돌려준다 (인터셉터에서 호출되더라도 SSR 충돌 없음).
  */
-export function getOrCreateOwnerUuid(): string {
+export function getOrCreateClientUuid(): string {
   if (!isBrowser()) return '';
-  const existing = getOwnerUuid();
+  const existing = getClientUuid();
   if (existing) return existing;
   const fresh = generateUuid();
-  setOwnerUuid(fresh);
+  setClientUuid(fresh);
   return fresh;
 }
 
-/** owner uuid 삭제 (로그아웃). 같은 탭 구독자에게 변경 이벤트도 발행. */
-export function clearOwnerUuid(): void {
+/** client uuid 삭제 (로그아웃). 같은 탭 구독자에게 변경 이벤트도 발행. */
+export function clearClientUuid(): void {
   if (!isBrowser()) return;
   try {
-    window.localStorage.removeItem(OWNER_UUID_STORAGE_KEY);
-    window.dispatchEvent(new Event(OWNER_UUID_CHANGE_EVENT));
+    window.localStorage.removeItem(CLIENT_UUID_STORAGE_KEY);
+    window.localStorage.removeItem(LEGACY_OWNER_UUID_STORAGE_KEY);
+    dispatchClientUuidChange();
   } catch {
     // ignore
   }
 }
+
+/** @deprecated Use getClientUuid instead. */
+export const getOwnerUuid = getClientUuid;
+
+/** @deprecated Use setClientUuid instead. */
+export const setOwnerUuid = setClientUuid;
+
+/** @deprecated Use getOrCreateClientUuid instead. */
+export const getOrCreateOwnerUuid = getOrCreateClientUuid;
+
+/** @deprecated Use clearClientUuid instead. */
+export const clearOwnerUuid = clearClientUuid;

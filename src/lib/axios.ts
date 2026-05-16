@@ -3,7 +3,7 @@ import axios, {
   type AxiosResponse,
   type InternalAxiosRequestConfig,
 } from 'axios';
-import { getOrCreateOwnerUuid } from './uuid';
+import { getOrCreateClientUuid } from './uuid';
 
 /**
  * 서버 공통 응답 envelope.
@@ -47,7 +47,7 @@ export const api = axios.create({
 const BODY_METHODS = new Set(['post', 'put', 'patch']);
 
 /**
- * 모든 body 가 있는 요청(POST/PUT/PATCH)에 owner uuid 를 자동 첨부.
+ * 모든 body 가 있는 요청(POST/PUT/PATCH)에 client uuid 를 자동 첨부.
  * uuid 는 localStorage 에서 읽고, 없으면 그 자리에서 생성해 저장한다.
  * 호출부에서 명시적으로 `uuid` 를 넣은 경우 그 값을 우선한다.
  */
@@ -55,7 +55,7 @@ api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   const method = config.method?.toLowerCase();
   if (!method || !BODY_METHODS.has(method)) return config;
 
-  const uuid = getOrCreateOwnerUuid();
+  const uuid = getOrCreateClientUuid();
   if (!uuid) return config;
 
   const current = config.data;

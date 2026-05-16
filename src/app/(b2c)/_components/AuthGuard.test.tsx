@@ -33,9 +33,9 @@ describe('AuthGuard', () => {
     pathname = '/my';
   });
 
-  it('저장된 owner uuid가 있으면 보호된 페이지를 렌더링한다', async () => {
+  it('저장된 client uuid가 있으면 보호된 페이지를 렌더링한다', async () => {
     window.localStorage.setItem(
-      'owner-uuid',
+      'client-uuid',
       'a33c6f0b-33a7-46ed-b75d-77637f338424',
     );
 
@@ -49,7 +49,27 @@ describe('AuthGuard', () => {
     expect(replace).not.toHaveBeenCalled();
   });
 
-  it('저장된 owner uuid가 없으면 splash로 이동한다', async () => {
+  it('기존 owner uuid 저장값은 client uuid로 마이그레이션하고 보호된 페이지를 렌더링한다', async () => {
+    window.localStorage.setItem(
+      'owner-uuid',
+      'a33c6f0b-33a7-46ed-b75d-77637f338424',
+    );
+
+    render(
+      <AuthGuard>
+        <p>protected content</p>
+      </AuthGuard>,
+    );
+
+    expect(await screen.findByText('protected content')).toBeInTheDocument();
+    expect(window.localStorage.getItem('client-uuid')).toBe(
+      'a33c6f0b-33a7-46ed-b75d-77637f338424',
+    );
+    expect(window.localStorage.getItem('owner-uuid')).toBeNull();
+    expect(replace).not.toHaveBeenCalled();
+  });
+
+  it('저장된 client uuid가 없으면 splash로 이동한다', async () => {
     render(
       <AuthGuard>
         <p>protected content</p>
@@ -62,7 +82,7 @@ describe('AuthGuard', () => {
     expect(screen.queryByText('protected content')).not.toBeInTheDocument();
   });
 
-  it('splash 페이지는 owner uuid 없이도 렌더링한다', async () => {
+  it('splash 페이지는 client uuid 없이도 렌더링한다', async () => {
     pathname = '/splash';
 
     render(

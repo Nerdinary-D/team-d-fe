@@ -1,5 +1,5 @@
 export type OnboardingMode = 'owner' | 'user';
-export type OnboardingStep = 'mode' | 'disability' | 'profile';
+export type OnboardingStep = 'mode' | 'disability' | 'profile' | 'complete';
 
 export type OnboardingDisabilityRequirement = {
   id: string;

@@ -92,6 +92,21 @@ describe('OnboardingFunnel', () => {
     ).not.toBeInTheDocument();
   });
 
+  it('사장님 모드는 1단계 다음 클릭 시 그라운드 등록 페이지로 이동한다', async () => {
+    const user = userEvent.setup();
+    render(<OnboardingFunnel />);
+
+    await user.click(screen.getByRole('button', { name: '사장님 모드' }));
+    await user.click(screen.getByRole('button', { name: '다음' }));
+
+    expect(window.localStorage.getItem('client-uuid')).toEqual(
+      expect.any(String),
+    );
+    expect(window.localStorage.getItem('owner-uuid')).toBeNull();
+    expect(replace).toHaveBeenCalledWith('/grounds/new');
+    expect(screen.queryByLabelText('2/3 단계')).not.toBeInTheDocument();
+  });
+
   it('장애 유형과 세부사항을 하나 이상 선택해야 다음으로 넘어간다', async () => {
     const user = userEvent.setup();
     render(<OnboardingFunnel />);
@@ -246,7 +261,7 @@ describe('OnboardingFunnel', () => {
     expect(screen.getByRole('button', { name: '완료' })).toBeEnabled();
   });
 
-  it('완료하면 온보딩 입력값을 저장하고 스플래시로 이동한다', async () => {
+  it('완료하면 온보딩 입력값을 저장하고 완료 화면을 보여준다', async () => {
     const user = userEvent.setup();
     render(<OnboardingFunnel />);
 
@@ -272,10 +287,41 @@ describe('OnboardingFunnel', () => {
       nickname: '너디너리',
       completedAt: expect.any(String),
     });
-    expect(replace).toHaveBeenCalledWith('/splash');
+    expect(
+      screen.getByRole('heading', {
+        name: '온보딩 완료! 이제 온그라운드를 시작할게요!',
+      }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: '시작하기' })).toBeEnabled();
+    expect(replace).not.toHaveBeenCalled();
   });
 
-  it('저장소 기록이 실패해도 완료 후 스플래시로 이동한다', async () => {
+  it('완료 화면에서 시작하기를 누르면 홈으로 이동한다', async () => {
+    const user = userEvent.setup();
+    render(<OnboardingFunnel />);
+
+    await user.click(screen.getByRole('button', { name: '사용자 모드' }));
+    await user.click(screen.getByRole('button', { name: '다음' }));
+    await user.click(screen.getByRole('button', { name: '지체 장애' }));
+    await user.click(
+      screen.getByRole('button', { name: '단차 없는 휠체어 진입' }),
+    );
+    await user.click(screen.getByRole('button', { name: '다음' }));
+    await user.type(
+      screen.getByPlaceholderText('닉네임을 입력하세요.'),
+      '너디너리',
+    );
+    await user.click(screen.getByRole('button', { name: '완료' }));
+    await user.click(screen.getByRole('button', { name: '시작하기' }));
+
+    expect(window.localStorage.getItem('client-uuid')).toEqual(
+      expect.any(String),
+    );
+    expect(window.localStorage.getItem('owner-uuid')).toBeNull();
+    expect(replace).toHaveBeenCalledWith('/');
+  });
+
+  it('저장소 기록이 실패해도 완료 화면에서 시작하기를 누르면 홈으로 이동한다', async () => {
     window.localStorage.setItem = vi.fn(() => {
       throw new Error('storage unavailable');
     });
@@ -295,7 +341,8 @@ describe('OnboardingFunnel', () => {
       '너디너리',
     );
     await user.click(screen.getByRole('button', { name: '완료' }));
+    await user.click(screen.getByRole('button', { name: '시작하기' }));
 
-    expect(replace).toHaveBeenCalledWith('/splash');
+    expect(replace).toHaveBeenCalledWith('/');
   });
 });
