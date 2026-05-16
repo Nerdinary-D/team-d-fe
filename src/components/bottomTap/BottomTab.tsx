@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { cn } from "@/lib/utils";
-import type { ReactNode, SVGProps } from "react";
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { cn } from '@/lib/utils';
+import type { ReactNode, SVGProps } from 'react';
 
 type TabIconProps = SVGProps<SVGSVGElement>;
 export type BottomTabItem = {
@@ -15,12 +15,7 @@ export type BottomTabItem = {
 
 function MateIcon(props: TabIconProps) {
   return (
-    <svg
-      viewBox="0 0 20 20"
-      fill="none"
-      aria-hidden
-      {...props}
-    >
+    <svg viewBox="0 0 20 20" fill="none" aria-hidden {...props}>
       <path
         d="M3 6C3 4.06562 4.56562 2.5 6.5 2.5C8.43438 2.5 10 4.06562 10 6C10 7.93438 8.43438 9.5 6.5 9.5C4.56562 9.5 3 7.93438 3 6ZM1 16.5C1 13.4625 3.4625 11 6.5 11C9.5375 11 12 13.4625 12 16.5V16.6875C12 17.4125 11.4125 18 10.6875 18H2.3125C1.5875 18 1 17.4125 1 16.6875V16.5ZM14.5 4C16.1562 4 17.5 5.34375 17.5 7C17.5 8.65625 16.1562 10 14.5 10C12.8438 10 11.5 8.65625 11.5 7C11.5 5.34375 12.8438 4 14.5 4ZM14.5 11.5C16.9844 11.5 19 13.5156 19 16V16.7C19 17.4188 18.4188 18 17.7 18H13.175C13.3813 17.6094 13.5 17.1625 13.5 16.6875V16.5C13.5 14.8906 12.9563 13.4094 12.0469 12.2281C12.7531 11.7687 13.5969 11.5 14.5 11.5Z"
         fill="currentColor"
@@ -31,12 +26,7 @@ function MateIcon(props: TabIconProps) {
 
 function HomeIcon(props: TabIconProps) {
   return (
-    <svg
-      viewBox="0 0 28 28"
-      fill="none"
-      aria-hidden
-      {...props}
-    >
+    <svg viewBox="0 0 28 28" fill="none" aria-hidden {...props}>
       <path
         d="M3.5 22.4857V11.1714C3.5 10.7733 3.58875 10.3962 3.76625 10.04C3.94375 9.68381 4.18833 9.39047 4.5 9.16L12 3.50286C12.4375 3.16762 12.9375 3 13.5 3C14.0625 3 14.5625 3.16762 15 3.50286L22.5 9.16C22.8125 9.39047 23.0575 9.68381 23.235 10.04C23.4125 10.3962 23.5008 10.7733 23.5 11.1714V22.4857C23.5 23.1771 23.255 23.7693 22.765 24.2621C22.275 24.7549 21.6867 25.0008 21 25H17.25C16.8958 25 16.5992 24.8793 16.36 24.6379C16.1208 24.3966 16.0008 24.0982 16 23.7429V17.4571C16 17.1009 15.88 16.8026 15.64 16.5621C15.4 16.3215 15.1033 16.2008 14.75 16.2H12.25C11.8958 16.2 11.5992 16.3207 11.36 16.5621C11.1208 16.8034 11.0008 17.1018 11 17.4571V23.7429C11 24.099 10.88 24.3978 10.64 24.6392C10.4 24.8806 10.1033 25.0008 9.75 25H6C5.3125 25 4.72417 24.754 4.235 24.2621C3.74583 23.7701 3.50083 23.178 3.5 22.4857Z"
         fill="currentColor"
@@ -47,12 +37,7 @@ function HomeIcon(props: TabIconProps) {
 
 function ProfileIcon(props: TabIconProps) {
   return (
-    <svg
-      viewBox="0 0 29 29"
-      fill="none"
-      aria-hidden
-      {...props}
-    >
+    <svg viewBox="0 0 29 29" fill="none" aria-hidden {...props}>
       <path
         fillRule="evenodd"
         clipRule="evenodd"
@@ -64,13 +49,18 @@ function ProfileIcon(props: TabIconProps) {
 }
 
 const defaultItems = [
-  { href: "/matches", label: "메이트", icon: MateIcon, iconClassName: "size-5" },
-  { href: "/", label: "홈", icon: HomeIcon, iconClassName: "size-7" },
   {
-    href: "/my",
-    label: "마이페이지",
+    href: '/matches',
+    label: '메이트',
+    icon: MateIcon,
+    iconClassName: 'size-5',
+  },
+  { href: '/', label: '홈', icon: HomeIcon, iconClassName: 'size-7' },
+  {
+    href: '/my',
+    label: '마이페이지',
     icon: ProfileIcon,
-    iconClassName: "size-[29px]",
+    iconClassName: 'size-[29px]',
   },
 ] satisfies BottomTabItem[];
 
@@ -88,8 +78,8 @@ export function BottomTab({
 
   const tabItems = items.map((tab) => {
     const isActive =
-      tab.href === "/"
-        ? currentPathname === "/"
+      tab.href === '/'
+        ? currentPathname === '/'
         : currentPathname.startsWith(tab.href);
     const Icon = tab.icon;
 
@@ -97,13 +87,13 @@ export function BottomTab({
       <Link
         key={tab.href}
         href={tab.href}
-        aria-current={isActive ? "page" : undefined}
+        aria-current={isActive ? 'page' : undefined}
         className={cn(
-          "flex h-[52px] w-[50px] flex-col items-center gap-2.5 text-center [font-size:11px] leading-[1.4] font-semibold tracking-[-0.025em]",
-          isActive ? "text-main" : "text-gray-300",
+          'flex h-[52px] w-[50px] flex-col items-center gap-2.5 text-center [font-size:11px] leading-[1.4] font-semibold tracking-[-0.025em]',
+          isActive ? 'text-main' : 'text-gray-300',
         )}
       >
-        <Icon className={cn("shrink-0", tab.iconClassName)} />
+        <Icon className={cn('shrink-0', tab.iconClassName)} />
         <span>{tab.label}</span>
       </Link>
     );

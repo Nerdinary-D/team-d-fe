@@ -1,11 +1,11 @@
-import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import { BottomTab } from "./BottomTab";
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
+import { BottomTab } from './BottomTab';
 
 const meta = {
-  title: "BottomTab/BottomTab",
+  title: 'BottomTab/BottomTab',
   component: BottomTab,
   parameters: {
-    layout: "fullscreen",
+    layout: 'fullscreen',
   },
   decorators: [
     (Story) => (
@@ -22,18 +22,18 @@ type Story = StoryObj<typeof meta>;
 
 export const HomeActive: Story = {
   args: {
-    activePathname: "/",
+    activePathname: '/',
   },
 };
 
 export const MateActive: Story = {
   args: {
-    activePathname: "/matches",
+    activePathname: '/matches',
   },
 };
 
 export const MyPageActive: Story = {
   args: {
-    activePathname: "/my",
+    activePathname: '/my',
   },
 };
