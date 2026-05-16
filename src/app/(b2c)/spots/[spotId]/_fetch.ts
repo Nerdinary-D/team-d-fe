@@ -42,12 +42,17 @@ type Facility = {
 // HTTP calls
 // ──────────────────────────────────────────────
 
-// TODO: 라우트 동적화 시 spotId 사용. 일단 facility id 1 로 하드코딩.
-const HARDCODED_FACILITY_ID = 1;
-
 async function fetchFacility(facilityId: number): Promise<Facility> {
   const { data } = await api.get<Facility>(`/api/v1/facilities/${facilityId}`);
   return data;
+}
+
+function parseFacilityId(spotId: string): number {
+  const facilityId = Number(spotId);
+  if (!Number.isInteger(facilityId) || facilityId <= 0) {
+    throw new Error('유효하지 않은 시설 ID입니다.');
+  }
+  return facilityId;
 }
 
 function facilityToSpot(facility: Facility): Spot {
@@ -76,8 +81,7 @@ function facilityToSpot(facility: Facility): Spot {
 }
 
 async function fetchSpot(spotId: string): Promise<Spot> {
-  void spotId;
-  const facility = await fetchFacility(HARDCODED_FACILITY_ID);
+  const facility = await fetchFacility(parseFacilityId(spotId));
   return facilityToSpot(facility);
 }
 
