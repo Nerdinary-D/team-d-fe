@@ -69,6 +69,12 @@ export type BottomTabProps = {
   items?: BottomTabItem[];
 };
 
+export function isBottomTabItemActive(pathname: string, href: string) {
+  return href === '/'
+    ? pathname === href
+    : pathname === href || pathname.startsWith(`${href}/`);
+}
+
 export function BottomTab({
   activePathname,
   items = defaultItems,
@@ -77,10 +83,7 @@ export function BottomTab({
   const currentPathname = activePathname ?? pathname;
 
   const tabItems = items.map((tab) => {
-    const isActive =
-      tab.href === '/'
-        ? currentPathname === '/'
-        : currentPathname.startsWith(tab.href);
+    const isActive = isBottomTabItemActive(currentPathname, tab.href);
     const Icon = tab.icon;
 
     return (

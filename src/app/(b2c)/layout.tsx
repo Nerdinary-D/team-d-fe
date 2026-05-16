@@ -1,4 +1,4 @@
-import { BottomTab } from '@/components/bottomTap/BottomTab';
+import { BottomTab } from '@/components/common/bottomTab/BottomTab';
 
 export default function B2CLayout({ children }: { children: React.ReactNode }) {
   return (

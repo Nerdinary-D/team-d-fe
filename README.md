@@ -30,7 +30,31 @@ npm run lint
 
 ## Testing
 
-E2E 테스트는 Playwright(iPhone 14 뷰포트)로 작성되어 있으며, PR마다 GitHub Actions에서 자동 실행됩니다.
+테스트는 두 층으로 운영합니다.
+
+| 종류                 | 도구                              | 대상                    | 위치                   |
+| -------------------- | --------------------------------- | ----------------------- | ---------------------- |
+| **Unit / Component** | Vitest + React Testing Library    | 순수 함수, 컴포넌트, 훅 | 소스 옆 `*.test.ts(x)` |
+| **E2E**              | Playwright (iPhone 14 / chromium) | 실제 페이지 시나리오    | `e2e/*.spec.ts`        |
+
+### Unit / Component (Vitest)
+
+테스트 파일은 **소스 파일 옆에 코로케이션** (`Foo.tsx` ↔ `Foo.test.tsx`).
+
+```bash
+# 전체 1회 실행
+pnpm test
+
+# 워치 모드 (TDD)
+pnpm test:watch
+
+# 커버리지
+pnpm test:coverage
+```
+
+### E2E (Playwright)
+
+PR마다 GitHub Actions에서 자동 실행됩니다.
 
 ```bash
 # 최초 1회: 브라우저 설치
@@ -48,11 +72,12 @@ pnpm test:e2e:report
 
 테스트 파일은 `e2e/` 디렉터리에 두며, 페이지가 늘어나면 라우트 단위(`e2e/<route>.spec.ts`)로 파일을 분리합니다.
 
-> **새로운 기능을 추가하거나 기존 동작을 수정할 때는 반드시 E2E 테스트를 추가/수정해야 하는지 먼저 확인합니다.**
+> **새로운 기능을 추가하거나 기존 동작을 수정할 때는 반드시 테스트를 추가/수정해야 하는지 먼저 확인합니다.**
 >
-> - 새 라우트/페이지 → 해당 라우트의 스모크 시나리오 1개 이상 추가
-> - 기존 UI 인터랙션 변경 → 영향 받는 spec 업데이트
-> - 시나리오 변경이 없다고 판단했다면, PR 설명에 "E2E 영향 없음" 한 줄로 명시
+> - 새 순수 함수 / 유틸 / 훅 → Unit 테스트 (Vitest)
+> - 새 공통 컴포넌트 / 복잡한 컴포넌트 로직 → Component 테스트 (Vitest + RTL)
+> - 새 라우트 / 페이지 / 사용자 플로우 → E2E 시나리오 (Playwright)
+> - 영향 없음으로 판단했다면, PR 설명에 "테스트 영향 없음" 한 줄로 명시
 
 ## Project Structure
 

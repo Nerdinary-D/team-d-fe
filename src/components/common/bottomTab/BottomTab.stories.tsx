@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { BottomTab } from './BottomTab';
 
 const meta = {
-  title: 'BottomTab/BottomTab',
+  title: 'Common/BottomTab',
   component: BottomTab,
   parameters: {
     layout: 'fullscreen',
