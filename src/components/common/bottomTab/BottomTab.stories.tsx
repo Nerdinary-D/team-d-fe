@@ -28,7 +28,7 @@ export const HomeActive: Story = {
 
 export const MateActive: Story = {
   args: {
-    activePathname: '/matches',
+    activePathname: '/mate',
   },
 };
 
