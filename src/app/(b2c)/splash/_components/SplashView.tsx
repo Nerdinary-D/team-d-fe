@@ -7,6 +7,7 @@ import { LoadingDots } from '@/components/common/LoadingDots';
 import { PageContainer } from '@/components/common/PageContainer';
 import { ONBOARDING_STORAGE_KEY } from '@/app/onboarding/_components/OnboardingFunnel/OnboardingFunnel.constants';
 import type { OnboardingFormState } from '@/app/onboarding/_components/OnboardingFunnel/OnboardingFunnel.types';
+import { getOwnerUuid } from '@/lib/uuid';
 import { mapRequirementsToCurations } from '../_curation-map';
 import { useLoginCustomer } from '../_fetch';
 
@@ -36,6 +37,12 @@ export function SplashView() {
   useEffect(() => {
     if (triggeredRef.current) return;
     triggeredRef.current = true;
+
+    // 이미 가입된 사용자 — 서버에 재요청 없이 바로 홈으로
+    if (getOwnerUuid()) {
+      router.replace(NEXT_ROUTE);
+      return;
+    }
 
     const requirements = readOnboardingRequirements();
     if (requirements === null) {
