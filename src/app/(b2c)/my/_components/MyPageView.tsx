@@ -1,8 +1,8 @@
 'use client';
 
 import { FacilityCard } from '@/app/(b2c)/_components/FacilityCard';
-import { DISABILITY_OPTIONS } from '@/app/onboarding/_components/OnboardingFunnel/OnboardingFunnel.constants';
 import {
+  curationsToDisabilityLabel,
   LOCATION_LABEL_TO_REGION,
   REGION_TO_LOCATION_LABEL,
 } from '@/api/customer-preferences';
@@ -15,7 +15,11 @@ import { cn } from '@/lib/utils';
 import { getOwnerUuid } from '@/lib/uuid';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
-import { likesMeQuery, useUpdateCustomerRegion } from '../_fetch';
+import {
+  customerProfileQuery,
+  likesMeQuery,
+  useUpdateCustomerRegion,
+} from '../_fetch';
 import { MyFilterChangeView } from './MyFilterChangeView';
 
 export type MyPageViewProps = {
@@ -32,10 +36,9 @@ export function MyPageView({
   const [isFilterChangeOpen, setIsFilterChangeOpen] = useState(false);
   const [uuid] = useState(() => getOwnerUuid() ?? '');
   const [removedFacilityIds, setRemovedFacilityIds] = useState<string[]>([]);
-  const [currentLocation, setCurrentLocation] = useState(location);
-  const [currentDisabilityLabel, setCurrentDisabilityLabel] =
-    useState(disabilityLabel);
+  const [pendingLocation, setPendingLocation] = useState<string | null>(null);
   const updateRegion = useUpdateCustomerRegion(uuid);
+  const customerProfile = useQuery(customerProfileQuery(uuid));
   const likedFacilities = useQuery(
     likesMeQuery(uuid, {
       page: 0,
@@ -43,6 +46,19 @@ export function MyPageView({
       sort: ['createdAt,DESC'],
     }),
   );
+  const profileLocation = customerProfile.data
+    ? REGION_TO_LOCATION_LABEL[customerProfile.data.region]
+    : location;
+  const currentLocation =
+    updateRegion.isPending && pendingLocation
+      ? pendingLocation
+      : profileLocation;
+  const currentDisabilityLabel = customerProfile.data
+    ? curationsToDisabilityLabel(
+        customerProfile.data.curations,
+        disabilityLabel,
+      )
+    : disabilityLabel;
 
   const facilityItemsState = (likedFacilities.data?.content ?? []).filter(
     (facility) => !removedFacilityIds.includes(facility.id),
@@ -58,39 +74,26 @@ export function MyPageView({
     }
   };
 
-  const formatDisabilityLabel = (selectedTypes: string[]) => {
-    const labels = selectedTypes
-      .map(
-        (type) =>
-          DISABILITY_OPTIONS.find((option) => option.id === type)?.label,
-      )
-      .filter((label): label is string => Boolean(label));
-
-    if (labels.length === 0) return currentDisabilityLabel;
-    if (labels.length === 1) return labels[0];
-    return `${labels[0]} 외 ${labels.length - 1}개`;
-  };
-
   const handleLocationChange = (nextLocation: string) => {
     const region = LOCATION_LABEL_TO_REGION[nextLocation];
     if (!uuid || !region || updateRegion.isPending) return;
 
-    const previousLocation = currentLocation;
-    setCurrentLocation(nextLocation);
+    setPendingLocation(nextLocation);
     updateRegion.mutate(
       { region },
       {
         onSuccess: () => {
-          setCurrentLocation(REGION_TO_LOCATION_LABEL[region]);
           toast.success('지역 설정이 완료되었어요!');
         },
         onError: (error) => {
-          setCurrentLocation(previousLocation);
           toast.error(
             error instanceof Error
               ? error.message
               : '지역 설정에 실패했어요. 잠시 후 다시 시도해주세요.',
           );
+        },
+        onSettled: () => {
+          setPendingLocation(null);
         },
       },
     );
@@ -227,9 +230,6 @@ export function MyPageView({
         <MyFilterChangeView
           uuid={uuid}
           onClose={() => setIsFilterChangeOpen(false)}
-          onSaved={(selectedTypes) =>
-            setCurrentDisabilityLabel(formatDisabilityLabel(selectedTypes))
-          }
         />
       ) : null}
     </>

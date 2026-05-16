@@ -1,4 +1,8 @@
-import { queryOptions, useMutation } from '@tanstack/react-query';
+import {
+  queryOptions,
+  useMutation,
+  useQueryClient,
+} from '@tanstack/react-query';
 import type { FacilityBadgeVariant } from '@/app/(b2c)/_components/FacilityBadge';
 import type { Curation, CustomerRegion } from '@/api/customer-preferences';
 import { CATEGORY_LABEL, CURATION_BADGE_VARIANT } from '@/api/facility-map';
@@ -47,6 +51,13 @@ export type LikesMeQueryParams = {
   sort?: string[];
 };
 
+export type CustomerProfile = {
+  uuid: string;
+  curations: Curation[];
+  region: CustomerRegion;
+  createdAt: string;
+};
+
 export type UpdateCustomerRegionPayload = {
   region: CustomerRegion;
 };
@@ -81,6 +92,11 @@ async function fetchLikesMe(
       sort: params.sort ?? ['createdAt,DESC'],
     },
   });
+  return data;
+}
+
+async function fetchCustomerProfile(uuid: string): Promise<CustomerProfile> {
+  const { data } = await api.get<CustomerProfile>(`/api/v1/customers/${uuid}`);
   return data;
 }
 
@@ -145,20 +161,43 @@ export const likesMeQuery = (uuid: string, params: LikesMeQueryParams = {}) =>
     select: likesMePageToLikedFacilities,
   });
 
+export const customerProfileQuery = (uuid: string) =>
+  queryOptions({
+    queryKey: ['customers', uuid, 'profile'] as const,
+    queryFn: () => fetchCustomerProfile(uuid),
+    enabled: Boolean(uuid),
+  });
+
 // ──────────────────────────────────────────────
 // Mutation hooks
 // ──────────────────────────────────────────────
 
 export function useUpdateCustomerRegion(uuid: string) {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: (payload: UpdateCustomerRegionPayload) =>
       patchCustomerRegion(uuid, payload),
+    onSuccess: () => {
+      if (!uuid) return undefined;
+      return queryClient.invalidateQueries({
+        queryKey: customerProfileQuery(uuid).queryKey,
+      });
+    },
   });
 }
 
 export function useUpdateCustomerCurations(uuid: string) {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: (payload: UpdateCustomerCurationsPayload) =>
       patchCustomerCurations(uuid, payload),
+    onSuccess: () => {
+      if (!uuid) return undefined;
+      return queryClient.invalidateQueries({
+        queryKey: customerProfileQuery(uuid).queryKey,
+      });
+    },
   });
 }

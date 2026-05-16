@@ -1,6 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import type { Curation, CustomerRegion } from '@/api/customer-preferences';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { MyPageView } from './MyPageView';
 
@@ -12,7 +13,11 @@ vi.mock('@/lib/axios', () => ({
 }));
 
 const ownerUuid = '3fa85f64-5717-4562-b3fc-2c963f66afa6';
+const customerProfileUrl = `/api/v1/customers/${ownerUuid}`;
 let storedItems: Record<string, string>;
+let likesMeResponse: ReturnType<typeof createLikesMeResponse>;
+let likesMeError: Error | null;
+let customerProfileResponse: ReturnType<typeof createCustomerProfileResponse>;
 
 function createLikesMeResponse(content = [createLikedFacilityResponse()]) {
   return {
@@ -42,6 +47,26 @@ function createLikedFacilityResponse() {
     ],
     isLiked: true,
   };
+}
+
+function createCustomerProfileResponse(
+  overrides: {
+    curations?: Curation[];
+    region?: CustomerRegion;
+  } = {},
+) {
+  return {
+    data: {
+      uuid: ownerUuid,
+      curations: overrides.curations ?? [],
+      region: overrides.region ?? 'SEOUL',
+      createdAt: '2026-05-16T21:33:40.612Z',
+    },
+  };
+}
+
+function getCustomerProfileCallCount() {
+  return apiGet.mock.calls.filter(([url]) => url === customerProfileUrl).length;
 }
 
 function renderMyPageView() {
@@ -75,11 +100,46 @@ describe('MyPageView', () => {
       },
     });
     apiGet.mockReset();
-    apiGet.mockResolvedValue(createLikesMeResponse());
-    apiPatch.mockReset();
-    apiPatch.mockResolvedValue({
-      data: { uuid: ownerUuid, updatedAt: '2026-05-16T21:28:35.380865' },
+    likesMeResponse = createLikesMeResponse();
+    likesMeError = null;
+    customerProfileResponse = createCustomerProfileResponse();
+    apiGet.mockImplementation((url: string) => {
+      if (url === customerProfileUrl) {
+        return Promise.resolve(customerProfileResponse);
+      }
+
+      if (url === '/api/v1/likes/me') {
+        if (likesMeError) return Promise.reject(likesMeError);
+        return Promise.resolve(likesMeResponse);
+      }
+
+      return Promise.reject(new Error(`Unhandled GET ${url}`));
     });
+    apiPatch.mockReset();
+    apiPatch.mockImplementation(
+      (
+        url: string,
+        payload: { curations?: Curation[]; region?: CustomerRegion },
+      ) => {
+        if (url === `${customerProfileUrl}/region` && payload.region) {
+          customerProfileResponse = createCustomerProfileResponse({
+            ...customerProfileResponse.data,
+            region: payload.region,
+          });
+        }
+
+        if (url === `${customerProfileUrl}/curations` && payload.curations) {
+          customerProfileResponse = createCustomerProfileResponse({
+            ...customerProfileResponse.data,
+            curations: payload.curations,
+          });
+        }
+
+        return Promise.resolve({
+          data: { uuid: ownerUuid, updatedAt: '2026-05-16T21:28:35.380865' },
+        });
+      },
+    );
     window.localStorage.setItem('owner-uuid', ownerUuid);
   });
 
@@ -138,7 +198,7 @@ describe('MyPageView', () => {
   });
 
   it('찜한 그라운드가 없으면 빈 상태를 보여준다', async () => {
-    apiGet.mockResolvedValueOnce(createLikesMeResponse([]));
+    likesMeResponse = createLikesMeResponse([]);
 
     renderMyPageView();
 
@@ -151,7 +211,7 @@ describe('MyPageView', () => {
   });
 
   it('likes/me 요청이 실패하면 에러 상태를 보여준다', async () => {
-    apiGet.mockRejectedValueOnce(new Error('network error'));
+    likesMeError = new Error('network error');
 
     renderMyPageView();
 
@@ -212,6 +272,9 @@ describe('MyPageView', () => {
     expect(
       await screen.findByRole('button', { name: '기본 지역 설정: 부산' }),
     ).toBeInTheDocument();
+    await waitFor(() => {
+      expect(getCustomerProfileCallCount()).toBeGreaterThanOrEqual(2);
+    });
   });
 
   it('필터변경을 누르면 프로그레스바 없이 필터 변경 화면을 띄운다', async () => {
@@ -255,9 +318,6 @@ describe('MyPageView', () => {
 
   it('필터 변경 다음 버튼을 누르면 고객 큐레이션 PATCH를 호출하고 닫는다', async () => {
     const user = userEvent.setup();
-    apiPatch.mockResolvedValueOnce({
-      data: { uuid: ownerUuid, updatedAt: '2026-05-16T21:29:39.519479' },
-    });
     renderMyPageView();
 
     await user.click(screen.getByRole('button', { name: '필터변경' }));
@@ -281,6 +341,9 @@ describe('MyPageView', () => {
         screen.queryByRole('dialog', { name: '필터 변경' }),
       ).not.toBeInTheDocument();
     });
-    expect(screen.getByText('현재 [시각 장애]')).toBeInTheDocument();
+    expect(await screen.findByText('현재 [시각 장애]')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(getCustomerProfileCallCount()).toBeGreaterThanOrEqual(2);
+    });
   });
 });

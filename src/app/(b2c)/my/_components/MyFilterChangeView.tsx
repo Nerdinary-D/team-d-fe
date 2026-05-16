@@ -15,14 +15,9 @@ import { useUpdateCustomerCurations } from '../_fetch';
 export type MyFilterChangeViewProps = {
   uuid: string;
   onClose: () => void;
-  onSaved?: (selectedDisabilityTypes: string[]) => void;
 };
 
-export function MyFilterChangeView({
-  uuid,
-  onClose,
-  onSaved,
-}: MyFilterChangeViewProps) {
+export function MyFilterChangeView({ uuid, onClose }: MyFilterChangeViewProps) {
   const [formState, setFormState] = useState(initialFormState);
   const selectedDisabilityTypes = formState.disabilityTypes ?? [];
   const updateCurations = useUpdateCustomerCurations(uuid);
@@ -64,7 +59,6 @@ export function MyFilterChangeView({
       {
         onSuccess: () => {
           toast.success('필터 설정이 완료되었어요!');
-          onSaved?.(selectedDisabilityTypes);
           onClose();
         },
         onError: (error) => {

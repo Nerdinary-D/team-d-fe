@@ -57,6 +57,22 @@ export const CURATIONS = [
 
 export type Curation = (typeof CURATIONS)[number];
 
+const CURATION_TO_DISABILITY_LABEL: Record<Curation, string> = {
+  NO_STEP_COURT_ENTRY: '지체 장애',
+  SPORTS_WHEELCHAIR_RENTAL: '지체 장애',
+  ACCESSIBLE_SHOWER_ROOM: '지체 장애',
+  GUIDE_DOG_ALLOWED: '시각 장애',
+  BRAILLE_INFRASTRUCTURE: '시각 장애',
+  VERBAL_GUIDANCE: '시각 장애',
+  WRITTEN_COMMUNICATION: '청각 장애',
+  VISUAL_MANUAL: '청각 장애',
+  VISUAL_ALARM: '청각 장애',
+  SIMPLE_SPORTS_RULE: '발달 장애',
+  LOW_STIMULUS_ENVIRONMENT: '발달 장애',
+  PRIVATE_SPACE: '발달 장애',
+  CERTIFIED_INSTRUCTOR: '발달 장애',
+};
+
 const REQUIREMENT_TO_CURATION: Record<string, Curation> = {
   'step-free-entry': 'NO_STEP_COURT_ENTRY',
   'equipment-rental': 'SPORTS_WHEELCHAIR_RENTAL',
@@ -82,4 +98,19 @@ export function mapRequirementsToCurations(
     if (curation) seen.add(curation);
   }
   return Array.from(seen);
+}
+
+export function curationsToDisabilityLabel(
+  curations: Curation[],
+  fallback: string,
+): string {
+  const labels = Array.from(
+    new Set(
+      curations.map((curation) => CURATION_TO_DISABILITY_LABEL[curation]),
+    ),
+  );
+
+  if (labels.length === 0) return fallback;
+  if (labels.length === 1) return labels[0];
+  return `${labels[0]} 외 ${labels.length - 1}개`;
 }
