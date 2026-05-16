@@ -25,21 +25,21 @@ export type MatchCardProps = {
 
 export function MatchCard({ match }: MatchCardProps) {
   const status = (
-    <span className={cn("text-caption", statusClass[match.status])}>
+    <span className={cn("text-xs font-medium", statusClass[match.status])}>
       {statusLabel[match.status]}
     </span>
   );
 
   const teams = (
-    <div className="flex items-center justify-between text-subtitle1">
+    <div className="flex items-center justify-between text-base font-semibold">
       <span>{match.homeTeam}</span>
-      <span className="text-caption text-muted-foreground">vs</span>
+      <span className="text-xs text-muted-foreground">vs</span>
       <span>{match.awayTeam}</span>
     </div>
   );
 
   const schedule = (
-    <p className="text-caption text-muted-foreground">
+    <p className="text-xs text-muted-foreground">
       {new Date(match.scheduledAt).toLocaleString("ko-KR")}
     </p>
   );

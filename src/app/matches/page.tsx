@@ -10,7 +10,7 @@ import { matchesQuery } from "./_fetch";
 export default function MatchesPage() {
   const { data, isLoading, isError } = useQuery(matchesQuery());
 
-  const header = <h1 className="mb-6 text-header1">경기 목록</h1>;
+  const header = <h1 className="mb-6 text-2xl font-bold">경기 목록</h1>;
 
   const body = (() => {
     if (isLoading) {
@@ -45,7 +45,7 @@ export default function MatchesPage() {
   })();
 
   return (
-    <PageContainer as="main">
+    <PageContainer as="main" size="md">
       {header}
       {body}
     </PageContainer>
