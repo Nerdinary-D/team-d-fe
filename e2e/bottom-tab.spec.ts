@@ -1,6 +1,8 @@
 import { expect, test } from '@playwright/test';
+import { seedOwnerUuid } from './auth';
 
 test('하단 탭으로 홈 ↔ 마이 페이지를 오갈 수 있다', async ({ page }) => {
+  await seedOwnerUuid(page);
   await page.goto('/');
 
   const nav = page.getByRole('navigation', { name: '메인 네비게이션' });

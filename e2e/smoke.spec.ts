@@ -1,6 +1,8 @@
 import { expect, test } from '@playwright/test';
+import { seedOwnerUuid } from './auth';
 
 test('홈 진입 시 타이틀과 하단 네비게이션이 보인다', async ({ page }) => {
+  await seedOwnerUuid(page);
   await page.goto('/');
 
   await expect(
