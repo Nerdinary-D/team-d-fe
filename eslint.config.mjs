@@ -11,13 +11,13 @@ const eslintConfig = defineConfig([
         "error",
         {
           selector:
-            "Literal[value=/\\b(?:bg|text|border|ring|outline|fill|stroke|from|via|to|decoration|shadow)-\\[#[0-9a-fA-F]{3,8}\\]/]",
+            "Literal[value=/\\b(?:bg|text|border|ring|outline|fill|stroke|from|via|to|decoration|shadow|divide|placeholder|caret|accent)-\\[#[0-9a-fA-F]{3,8}\\]/]",
           message:
             "Do not use arbitrary hex color classes. Add the color to src/app/globals.css as a design token and use the token class instead.",
         },
         {
           selector:
-            "TemplateElement[value.raw=/\\b(?:bg|text|border|ring|outline|fill|stroke|from|via|to|decoration|shadow)-\\[#[0-9a-fA-F]{3,8}\\]/]",
+            "TemplateElement[value.raw=/\\b(?:bg|text|border|ring|outline|fill|stroke|from|via|to|decoration|shadow|divide|placeholder|caret|accent)-\\[#[0-9a-fA-F]{3,8}\\]/]",
           message:
             "Do not use arbitrary hex color classes. Add the color to src/app/globals.css as a design token and use the token class instead.",
         },

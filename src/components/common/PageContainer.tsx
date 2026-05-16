@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 import type { ComponentProps } from "react";
 
 const sizeMap = {
-  mobile: "min-h-dvh max-w-[360px] px-4 py-4 sm:px-4 lg:px-4",
+  mobile: "min-h-dvh max-w-[360px] !px-4 !py-4",
   sm: "max-w-2xl",
   md: "max-w-4xl",
   lg: "max-w-6xl",
