@@ -112,6 +112,17 @@ describe('LocationSelector', () => {
     expect(onLocationChange).toHaveBeenCalledWith('대전');
   });
 
+  it('showSuccessToast=false이면 지역 선택 성공 토스트를 직접 띄우지 않는다', async () => {
+    const user = userEvent.setup();
+    showToastPopup.mockClear();
+    render(<LocationSelector location="서울" showSuccessToast={false} />);
+
+    await user.click(screen.getByRole('button', { name: '지역 선택: 서울' }));
+    await user.click(screen.getByRole('button', { name: '대전' }));
+
+    expect(showToastPopup).not.toHaveBeenCalled();
+  });
+
   it('지역 변경 직후 바텀 시트를 다시 열면 예약된 토스트를 취소한다', async () => {
     vi.useFakeTimers();
     showToastPopup.mockClear();

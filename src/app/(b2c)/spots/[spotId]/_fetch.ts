@@ -10,7 +10,7 @@ import {
   getMockPartnerPosts,
 } from './_mock';
 import type { CreatePartnerPostInput, PartnerPost, Spot } from './_schema';
-import { CATEGORY_LABEL, CURATION_LABEL } from './_facility-map';
+import { CATEGORY_LABEL, CURATION_LABEL } from '@/api/facility-map';
 
 // ──────────────────────────────────────────────
 // Types

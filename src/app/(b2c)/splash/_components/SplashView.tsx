@@ -7,8 +7,8 @@ import { LoadingDots } from '@/components/common/LoadingDots';
 import { PageContainer } from '@/components/common/PageContainer';
 import { ONBOARDING_STORAGE_KEY } from '@/app/onboarding/_components/OnboardingFunnel/OnboardingFunnel.constants';
 import type { OnboardingFormState } from '@/app/onboarding/_components/OnboardingFunnel/OnboardingFunnel.types';
+import { mapRequirementsToCurations } from '@/api/customer-preferences';
 import { getOwnerUuid } from '@/lib/uuid';
-import { mapRequirementsToCurations } from '../_curation-map';
 import { useLoginCustomer } from '../_fetch';
 
 const NEXT_ROUTE = '/';

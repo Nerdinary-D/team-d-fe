@@ -5,6 +5,12 @@ import axios, {
 } from 'axios';
 import { getOrCreateOwnerUuid } from './uuid';
 
+declare module 'axios' {
+  export interface AxiosRequestConfig {
+    skipOwnerUuidInjection?: boolean;
+  }
+}
+
 /**
  * 서버 공통 응답 envelope.
  * 인터셉터에서 `result`만 떼서 `response.data`로 돌려주므로,
@@ -54,6 +60,7 @@ const BODY_METHODS = new Set(['post', 'put', 'patch']);
 api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   const method = config.method?.toLowerCase();
   if (!method || !BODY_METHODS.has(method)) return config;
+  if (config.skipOwnerUuidInjection) return config;
 
   const uuid = getOrCreateOwnerUuid();
   if (!uuid) return config;
