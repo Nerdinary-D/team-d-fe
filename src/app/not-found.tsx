@@ -1,12 +1,10 @@
-import Link from "next/link";
-import { buttonVariants } from "@/components/common/Button";
-import { EmptyState } from "@/components/common/EmptyState";
-import { PageContainer } from "@/components/common/PageContainer";
+import Link from 'next/link';
+import { buttonVariants } from '@/components/common/Button';
+import { EmptyState } from '@/components/common/EmptyState';
+import { PageContainer } from '@/components/common/PageContainer';
 
 export default function NotFound() {
-  const icon = (
-    <span className="text-6xl font-bold tracking-tight">404</span>
-  );
+  const icon = <span className="text-6xl font-bold tracking-tight">404</span>;
 
   const action = (
     <Link href="/" className={buttonVariants()}>

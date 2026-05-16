@@ -1,4 +1,4 @@
-import { QueryClient, environmentManager } from "@tanstack/react-query";
+import { QueryClient, environmentManager } from '@tanstack/react-query';
 
 function makeQueryClient() {
   return new QueryClient({
