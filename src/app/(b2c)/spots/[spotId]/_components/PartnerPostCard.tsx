@@ -26,7 +26,7 @@ export function PartnerPostCard({ post, className }: PartnerPostCardProps) {
   );
 
   const scheduleLine = (
-    <p className="text-subtitle2 text-main">{post.schedule}</p>
+    <p className="text-subtitle2 text-gray-500">{post.schedule}</p>
   );
 
   const contentLine = (
@@ -57,7 +57,7 @@ export function PartnerPostCard({ post, className }: PartnerPostCardProps) {
         {scheduleLine}
         {contentLine}
       </div>
-      <div className="flex justify-end">{chatButton}</div>
+      <div className="flex">{chatButton}</div>
     </article>
   );
 }

@@ -48,6 +48,8 @@
   --color-gray-800: #1f1f1f;
   --color-chat-bg: #ffe656;
   --color-chat-fg: #392002;
+  --color-chip-bg: #eef9f5;
+  --color-chip-fg: #02653f;
   --color-primary-100: var(--color-main);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);

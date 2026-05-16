@@ -14,10 +14,10 @@ export function InfraChipList({ infraList, className }: InfraChipListProps) {
   const chips = infraList.map((label) => (
     <li
       key={label}
-      className="flex items-center gap-[13px] rounded-full border border-main px-[21px] py-[14px]"
+      className="flex items-center gap-[13px] rounded-full bg-chip-bg px-[21px] py-[14px]"
     >
       <Image src="/icons/wheel.svg" alt="" width={16} height={16} aria-hidden />
-      <span className="text-caption text-sub">{label}</span>
+      <span className="text-caption text-chip-fg">{label}</span>
     </li>
   ));
 
