@@ -64,6 +64,24 @@ describe('LocationSelector', () => {
     );
   });
 
+  it('라벨이 있는 전체 행 트리거로도 같은 지역 설정 바텀 시트를 연다', async () => {
+    const user = userEvent.setup();
+    render(<LocationSelector location="서울" triggerLabel="기본 지역 설정" />);
+
+    const button = screen.getByRole('button', {
+      name: '기본 지역 설정: 서울',
+    });
+    expect(button).toHaveTextContent('기본 지역 설정');
+    expect(button).toHaveTextContent('서울');
+    expect(button).toHaveClass('w-full', 'justify-between');
+
+    await user.click(button);
+
+    expect(
+      await screen.findByRole('dialog', { name: '지역 설정' }),
+    ).toBeInTheDocument();
+  });
+
   it('작은 모바일 화면에서 지역 옵션 그리드가 시트 안에서 줄어든다', async () => {
     const user = userEvent.setup();
     render(<LocationSelector location="서울" />);

@@ -20,7 +20,7 @@ function getSnapshot() {
 }
 
 function getServerSnapshot() {
-  return null;
+  return undefined;
 }
 
 export type AuthGuardProps = {
@@ -37,14 +37,16 @@ export function AuthGuard({ children }: AuthGuardProps) {
   const pathname = usePathname();
   const uuid = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
   const isSplash = pathname === SPLASH_ROUTE;
+  const isHydrating = uuid === undefined;
   const allowed = isSplash || Boolean(uuid);
 
   useEffect(() => {
-    if (!allowed) {
+    if (!isHydrating && !allowed) {
       router.replace(SPLASH_ROUTE);
     }
-  }, [allowed, router]);
+  }, [allowed, isHydrating, router]);
 
+  if (isHydrating && !isSplash) return null;
   if (!allowed) return null;
 
   return <>{children}</>;

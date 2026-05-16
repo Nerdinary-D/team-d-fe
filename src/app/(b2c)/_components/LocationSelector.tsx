@@ -33,10 +33,12 @@ export type LocationSelectorProps = Omit<
   'children'
 > & {
   location: string;
+  triggerLabel?: string;
 };
 
 export function LocationSelector({
   location,
+  triggerLabel,
   className,
   ...props
 }: LocationSelectorProps) {
@@ -96,22 +98,46 @@ export function LocationSelector({
     />
   );
 
-  const trigger = (
-    <button
-      type="button"
-      aria-label={`지역 선택: ${selectedLocation}`}
-      onClick={openLocationSheet}
-      className={cn(
-        'text-subtitle1 inline-flex h-6 shrink-0 items-center justify-center gap-1.5 rounded-none border-0 bg-transparent p-0 outline-none focus-visible:ring-3 focus-visible:ring-ring/50',
-        className,
-      )}
-      {...props}
-    >
+  const triggerAriaLabel = triggerLabel
+    ? `${triggerLabel}: ${selectedLocation}`
+    : `지역 선택: ${selectedLocation}`;
+
+  const triggerContent = triggerLabel ? (
+    <>
+      <span className="flex items-start gap-1">
+        {locationIcon}
+        <span className="text-gray-900 whitespace-nowrap">{triggerLabel}</span>
+      </span>
+      <span className="flex items-center gap-1 text-gray-500">
+        <span>{selectedLocation}</span>
+        <span className="flex size-6 shrink-0 -rotate-90 items-center justify-center">
+          {expandIcon}
+        </span>
+      </span>
+    </>
+  ) : (
+    <>
       <span className="flex items-start gap-1">
         {locationIcon}
         {label}
       </span>
       {expandIcon}
+    </>
+  );
+
+  const trigger = (
+    <button
+      type="button"
+      aria-label={triggerAriaLabel}
+      onClick={openLocationSheet}
+      className={cn(
+        'text-subtitle1 inline-flex h-6 shrink-0 items-center rounded-none border-0 bg-transparent p-0 outline-none focus-visible:ring-3 focus-visible:ring-ring/50',
+        triggerLabel ? 'w-full justify-between gap-0' : 'justify-center gap-1.5',
+        className,
+      )}
+      {...props}
+    >
+      {triggerContent}
     </button>
   );
 
