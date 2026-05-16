@@ -1,8 +1,8 @@
-import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import { Skeleton, SkeletonText } from "@/components/common/Skeleton";
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
+import { Skeleton, SkeletonText } from '@/components/common/Skeleton';
 
 const meta = {
-  title: "Common/Skeleton",
+  title: 'Common/Skeleton',
   component: Skeleton,
 } satisfies Meta<typeof Skeleton>;
 

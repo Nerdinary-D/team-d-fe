@@ -1,5 +1,5 @@
-import { cn } from "@/lib/utils";
-import type { ReactNode } from "react";
+import { cn } from '@/lib/utils';
+import type { ReactNode } from 'react';
 
 export type EmptyStateProps = {
   icon?: ReactNode;
@@ -20,9 +20,7 @@ export function EmptyState({
     <div className="mb-4 text-muted-foreground [&_svg]:size-10">{icon}</div>
   ) : null;
 
-  const titleSlot = (
-    <h2 className="text-subtitle1 text-foreground">{title}</h2>
-  );
+  const titleSlot = <h2 className="text-subtitle1 text-foreground">{title}</h2>;
 
   const descriptionSlot = description ? (
     <p className="mt-1 text-body2 text-muted-foreground">{description}</p>
@@ -34,7 +32,7 @@ export function EmptyState({
     <div
       data-slot="empty-state"
       className={cn(
-        "flex flex-col items-center justify-center rounded-xl border border-dashed border-border bg-card/30 px-6 py-12 text-center",
+        'flex flex-col items-center justify-center rounded-xl border border-dashed border-border bg-card/30 px-6 py-12 text-center',
         className,
       )}
     >

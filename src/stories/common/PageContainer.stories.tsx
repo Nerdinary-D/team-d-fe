@@ -1,16 +1,16 @@
-import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import { PageContainer } from "@/components/common/PageContainer";
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
+import { PageContainer } from '@/components/common/PageContainer';
 
 const meta = {
-  title: "Common/PageContainer",
+  title: 'Common/PageContainer',
   component: PageContainer,
   args: {
-    size: "mobile",
+    size: 'mobile',
   },
   argTypes: {
     size: {
-      control: "select",
-      options: ["mobile", "sm", "md", "lg", "xl", "full"],
+      control: 'select',
+      options: ['mobile', 'sm', 'md', 'lg', 'xl', 'full'],
     },
   },
 } satisfies Meta<typeof PageContainer>;

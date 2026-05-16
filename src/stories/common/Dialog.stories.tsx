@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import { Button } from "@/components/common/Button";
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
+import { Button } from '@/components/common/Button';
 import {
   Dialog,
   DialogContent,
@@ -8,10 +8,10 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/common/Dialog";
+} from '@/components/common/Dialog';
 
 const meta = {
-  title: "Common/Dialog",
+  title: 'Common/Dialog',
   component: Dialog,
 } satisfies Meta<typeof Dialog>;
 
