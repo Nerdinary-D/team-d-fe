@@ -1,10 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { ReactNode } from 'react';
-import { likeStatusQuery } from '@/api/likes';
 import { HomePage } from '@/app/(b2c)/_components/HomePage';
 import { recommendedFacilitiesQuery } from '@/app/(b2c)/_fetch';
-import { AppToastViewport } from '@/components/common/Toast';
+import { Toaster } from '@/components/common/Toast';
 import { BottomTab } from '@/components/common/bottomTab/BottomTab';
 
 const STORY_UUID = 'a33c6f0b-33a7-46ed-b75d-77637f338424';
@@ -64,13 +63,6 @@ function createHomePageQueryClient() {
     },
   );
 
-  for (const facilityId of [1, 2, 3]) {
-    queryClient.setQueryData(likeStatusQuery(STORY_UUID, facilityId).queryKey, {
-      uuid: STORY_UUID,
-      isLiked: false,
-    });
-  }
-
   return queryClient;
 }
 
@@ -98,7 +90,7 @@ const meta = {
         <div className="min-h-[740px] bg-white">
           <Story />
           <BottomTab activePathname="/" />
-          <AppToastViewport />
+          <Toaster />
         </div>
       </HomePageStoryProvider>
     ),

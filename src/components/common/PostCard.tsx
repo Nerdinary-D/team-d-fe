@@ -58,7 +58,7 @@ export function PostCard({
   return (
     <article
       className={cn(
-        'border-main flex flex-col gap-[10px] rounded-[10px] border bg-white px-4 py-[15px]',
+        'border-gray-400 flex flex-col gap-[10px] rounded-[10px] border bg-white px-4 py-[15px]',
         className,
       )}
     >

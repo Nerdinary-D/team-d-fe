@@ -111,29 +111,32 @@ describe('HomePage', () => {
     expect(screen.getAllByRole('button', { name: '찜하기' })).toHaveLength(3);
   });
 
-  it('모바일 홈 화면 폭과 상단 24px 여백을 유지한다', () => {
+  it('모바일 홈 화면 폭과 흰색 배경을 유지한다', () => {
     renderHome();
 
     expect(screen.getByRole('main')).toHaveClass(
       'max-w-[360px]',
-      '!pt-6',
+      'min-h-dvh',
       'bg-white',
     );
   });
 
-  it('상단 인사와 위치 선택은 고정하고 카드 목록만 스크롤한다', () => {
+  it('상단 인사와 위치 선택을 sticky 헤더로 묶고 그라데이션을 추가한다', () => {
     renderHome();
 
-    expect(screen.getByRole('main')).toHaveClass(
-      'h-[calc(100dvh-90px)]',
-      'overflow-hidden',
-      '!min-h-0',
+    const banner = screen.getByRole('banner');
+    expect(banner).toHaveClass('sticky', 'top-0', 'z-10', 'bg-white');
+    expect(banner.querySelector('.bg-gradient-to-b')).toHaveClass(
+      'pointer-events-none',
+      'absolute',
+      'top-full',
+      'from-white',
+      'to-transparent',
     );
-    expect(screen.getByRole('banner')).toHaveClass('shrink-0');
     expect(screen.getByLabelText('추천 시설')).toHaveClass(
-      'flex-1',
-      'overflow-y-auto',
-      'scrollbar-hidden',
+      'flex',
+      'flex-col',
+      'gap-4',
     );
   });
 

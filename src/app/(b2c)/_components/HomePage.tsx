@@ -1,6 +1,5 @@
 'use client';
 
-import { PageContainer } from '@/components/common/PageContainer';
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { EmptyState } from '@/components/common/EmptyState';
@@ -142,23 +141,28 @@ export function HomePage({
     }));
   };
 
-  const welcome = (
-    <header className="flex shrink-0 flex-col gap-[5px]">
-      <h1 className="text-header2 text-gray-900">{userName}님, 환영해요 😀</h1>
-      <p className="text-header2 text-gray-900">
-        <span>{groundOwnerName}님을 위한 </span>
-        <span className="text-main">안심 그라운드</span>
-      </p>
-    </header>
-  );
-
-  const locationSelector = (
-    <div className="mt-[17px] flex h-6 shrink-0">
-      <LocationSelector
-        location={selectedLocation}
-        onLocationChange={setSelectedLocation}
+  const header = (
+    <header className="sticky top-0 z-10 flex flex-col gap-[17px] bg-white px-4 pt-6">
+      <div className="flex flex-col gap-[5px]">
+        <h1 className="text-header2 text-gray-900">
+          {userName}님, 환영해요 😀
+        </h1>
+        <p className="text-header2 text-gray-900">
+          <span>{groundOwnerName}님을 위한 </span>
+          <span className="text-main">안심 그라운드</span>
+        </p>
+      </div>
+      <div className="flex h-6">
+        <LocationSelector
+          location={selectedLocation}
+          onLocationChange={setSelectedLocation}
+        />
+      </div>
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-full h-3 bg-gradient-to-b from-white to-transparent"
       />
-    </div>
+    </header>
   );
 
   const facilityItems = (() => {
@@ -202,20 +206,16 @@ export function HomePage({
   const facilityList = (
     <section
       aria-label="추천 시설"
-      className="scrollbar-hidden mt-[17px] flex flex-1 flex-col gap-4 overflow-y-auto pb-4"
+      className="flex flex-col gap-4 px-4 pt-[17px] pb-[90px]"
     >
       {facilityItems}
     </section>
   );
 
   return (
-    <PageContainer
-      as="main"
-      className="relative flex h-[calc(100dvh-90px)] !min-h-0 max-w-[360px] flex-col overflow-hidden bg-white !px-4 !pt-6 !pb-0"
-    >
-      {welcome}
-      {locationSelector}
+    <main className="mx-auto flex min-h-dvh w-full max-w-[360px] flex-col bg-white">
+      {header}
       {facilityList}
-    </PageContainer>
+    </main>
   );
 }
