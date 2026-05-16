@@ -21,11 +21,11 @@ export function EmptyState({
   ) : null;
 
   const titleSlot = (
-    <h2 className="text-base font-semibold text-foreground">{title}</h2>
+    <h2 className="text-subtitle1 text-foreground">{title}</h2>
   );
 
   const descriptionSlot = description ? (
-    <p className="mt-1 text-sm text-muted-foreground">{description}</p>
+    <p className="mt-1 text-body2 text-muted-foreground">{description}</p>
   ) : null;
 
   const actionSlot = action ? <div className="mt-6">{action}</div> : null;
