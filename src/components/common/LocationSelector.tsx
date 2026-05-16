@@ -134,7 +134,9 @@ export function LocationSelector({
       onClick={openLocationSheet}
       className={cn(
         'text-subtitle1 inline-flex h-6 shrink-0 items-center rounded-none border-0 bg-transparent p-0 outline-none focus-visible:ring-3 focus-visible:ring-ring/50',
-        triggerLabel ? 'w-full justify-between gap-0' : 'justify-center gap-1.5',
+        triggerLabel
+          ? 'w-full justify-between gap-0'
+          : 'justify-center gap-1.5',
         className,
       )}
       {...props}

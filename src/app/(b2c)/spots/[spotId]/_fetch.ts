@@ -187,9 +187,7 @@ export function useToggleLike(uuid: string, facilityId: number) {
 
   return useMutation({
     mutationFn: (isCurrentlyLiked: boolean) =>
-      isCurrentlyLiked
-        ? deleteLike(uuid, facilityId)
-        : postLike(facilityId),
+      isCurrentlyLiked ? deleteLike(uuid, facilityId) : postLike(facilityId),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: likeStatusQuery(uuid, facilityId).queryKey,
