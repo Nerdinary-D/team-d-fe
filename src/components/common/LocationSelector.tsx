@@ -30,13 +30,15 @@ const locationOptions = [
 
 export type LocationSelectorProps = Omit<
   ComponentProps<'button'>,
-  'children'
+  'children' | 'onChange'
 > & {
   location: string;
+  onLocationChange?: (next: string) => void;
 };
 
 export function LocationSelector({
   location,
+  onLocationChange,
   className,
   ...props
 }: LocationSelectorProps) {
@@ -150,6 +152,7 @@ export function LocationSelector({
               setSelectedLocation(option);
               setIsSheetOpen(false);
               if (!isSelected) {
+                onLocationChange?.(option);
                 clearLocationToastTimeout();
                 locationToastTimeoutRef.current = setTimeout(() => {
                   showToastPopup('지역 설정이 완료되었어요!');

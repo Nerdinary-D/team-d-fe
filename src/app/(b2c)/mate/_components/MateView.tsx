@@ -1,11 +1,10 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import Image from 'next/image';
 import { useState } from 'react';
 import { EmptyState } from '@/components/common/EmptyState';
+import { LocationSelector } from '@/components/common/LocationSelector';
 import { PostCard } from '@/components/common/PostCard';
-import { SelectToggle } from '@/components/common/SelectToggle';
 import { SkeletonText } from '@/components/common/Skeleton';
 import { matePostsQuery } from '../_fetch';
 
@@ -13,27 +12,10 @@ export function MateView() {
   const [city, setCity] = useState('서울');
   const { data, isLoading, isError } = useQuery(matePostsQuery(city));
 
-  const locationIcon = (
-    <Image
-      src="/icons/location.svg"
-      alt=""
-      width={24}
-      height={24}
-      aria-hidden
-    />
-  );
-
   const header = (
     <header className="sticky top-0 z-10 flex flex-col gap-2 bg-white px-4 pt-6">
       <h1 className="text-header2 text-black">지금 모집 중인 그라운드 🔥</h1>
-      <SelectToggle
-        label={city}
-        icon={locationIcon}
-        onClick={() => {
-          setCity((prev) => (prev === '서울' ? '부산' : '서울'));
-        }}
-        aria-label="지역 선택"
-      />
+      <LocationSelector location={city} onLocationChange={setCity} />
       <div
         aria-hidden
         className="pointer-events-none absolute inset-x-0 top-full h-3 bg-gradient-to-b from-white to-transparent"

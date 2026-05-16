@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
-import { LocationSelector } from '@/app/(b2c)/_components/LocationSelector';
+import { LocationSelector } from '@/components/common/LocationSelector';
 
 const meta = {
   title: 'Pages/Home/LocationSelector',
