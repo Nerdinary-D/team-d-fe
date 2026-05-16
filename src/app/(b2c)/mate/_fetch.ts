@@ -7,6 +7,7 @@ import { api } from '@/lib/axios';
 
 export type MatePost = {
   id: string;
+  facilityId: number;
   city: string;
   title: string;
   schedule: string;
@@ -49,6 +50,7 @@ function toMatePost(post: MatePostResponse): MatePost {
   return {
     // GET 응답에 per-post id 가 없어 facilityId+createdAt 합성 키 사용
     id: `${post.facilityId}-${post.createdAt}`,
+    facilityId: post.facilityId,
     city: post.region,
     title: post.title,
     schedule: post.meetingTime,

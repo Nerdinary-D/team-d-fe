@@ -62,6 +62,7 @@ export function MateView() {
             schedule={post.schedule}
             content={post.content}
             openChatUrl={post.openChatUrl}
+            href={`/spots/${post.facilityId}`}
           />
         ))}
       </div>
