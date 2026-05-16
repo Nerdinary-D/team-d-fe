@@ -29,6 +29,7 @@ export const CURATIONS = [
 export type Curation = (typeof CURATIONS)[number];
 
 export type CustomerLoginPayload = {
+  nickname: string;
   curations: Curation[];
 };
 

@@ -14,16 +14,27 @@ import { useLoginCustomer } from '../_fetch';
 const NEXT_ROUTE = '/';
 const ONBOARDING_ROUTE = '/onboarding';
 
-function readOnboardingRequirements(): string[] | null {
+type OnboardingSignupPayload = {
+  nickname: string;
+  requirements: string[];
+};
+
+function readOnboardingPayload(): OnboardingSignupPayload | null {
   if (typeof window === 'undefined') return null;
   try {
     const raw = window.localStorage.getItem(ONBOARDING_STORAGE_KEY);
     if (!raw) return null;
     const parsed = JSON.parse(raw) as Partial<OnboardingFormState>;
     if (!Array.isArray(parsed?.requirements)) return null;
-    return parsed.requirements.filter(
-      (id): id is string => typeof id === 'string',
-    );
+    if (typeof parsed.nickname !== 'string' || parsed.nickname.length === 0) {
+      return null;
+    }
+    return {
+      nickname: parsed.nickname,
+      requirements: parsed.requirements.filter(
+        (id): id is string => typeof id === 'string',
+      ),
+    };
   } catch {
     return null;
   }
@@ -40,23 +51,23 @@ export function SplashView() {
 
     // 이미 가입된 사용자 — 서버에 재요청 없이 바로 홈으로
     if (getOwnerUuid()) {
-      router.replace(NEXT_ROUTE);
+      window.location.assign(NEXT_ROUTE);
       return;
     }
 
-    const requirements = readOnboardingRequirements();
-    if (requirements === null) {
+    const payload = readOnboardingPayload();
+    if (payload === null) {
       router.replace(ONBOARDING_ROUTE);
       return;
     }
 
-    const curations = mapRequirementsToCurations(requirements);
+    const curations = mapRequirementsToCurations(payload.requirements);
 
     mutate(
-      { curations },
+      { nickname: payload.nickname, curations },
       {
         onSuccess: () => {
-          router.replace(NEXT_ROUTE);
+          window.location.assign(NEXT_ROUTE);
         },
         onError: (error) => {
           toast.error(
