@@ -272,10 +272,10 @@ describe('OnboardingFunnel', () => {
       nickname: '너디너리',
       completedAt: expect.any(String),
     });
-    expect(replace).toHaveBeenCalledWith('/matches');
+    expect(replace).toHaveBeenCalledWith('/splash');
   });
 
-  it('저장소 기록이 실패해도 완료 후 매칭 목록으로 이동한다', async () => {
+  it('저장소 기록이 실패해도 완료 후 스플래시로 이동한다', async () => {
     window.localStorage.setItem = vi.fn(() => {
       throw new Error('storage unavailable');
     });
@@ -296,6 +296,6 @@ describe('OnboardingFunnel', () => {
     );
     await user.click(screen.getByRole('button', { name: '완료' }));
 
-    expect(replace).toHaveBeenCalledWith('/matches');
+    expect(replace).toHaveBeenCalledWith('/splash');
   });
 });
