@@ -39,8 +39,14 @@
   --text-caption--line-height: 1.4;
   --text-caption--letter-spacing: 0;
   --color-main: #0ebd7a;
+  --color-main-dark: #02653f;
   --color-sub: #b3f73f;
+  --color-facility-badge: #eef9f5;
   --color-gray-300: #d4d3d8;
+  --color-gray-500: #7c7c7c;
+  --color-gray-600: #555555;
+  --color-gray-800: #1f1f1f;
+  --color-gray-900: #121212;
   --color-primary-100: var(--color-main);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
@@ -158,5 +164,16 @@
   }
   html {
     @apply font-sans;
+  }
+}
+
+@layer utilities {
+  .scrollbar-hidden {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hidden::-webkit-scrollbar {
+    display: none;
   }
 }
