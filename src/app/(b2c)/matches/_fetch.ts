@@ -21,6 +21,11 @@ export type Match = {
 
 export type CreateMatchPayload = Omit<Match, "id" | "status">;
 
+export type HealthCheck = {
+  message: string;
+  baseURL: string;
+};
+
 // ──────────────────────────────────────────────
 // HTTP calls (axios) — not exported
 // ──────────────────────────────────────────────
@@ -40,6 +45,17 @@ async function createMatch(payload: CreateMatchPayload) {
   return data;
 }
 
+async function fetchHealth(): Promise<HealthCheck> {
+  const response = await api.get<string>("/health", {
+    responseType: "text",
+    transformResponse: (raw) => raw,
+  });
+  return {
+    message: typeof response.data === "string" ? response.data : String(response.data),
+    baseURL: String(response.config.baseURL ?? ""),
+  };
+}
+
 // ──────────────────────────────────────────────
 // queryOptions
 // ──────────────────────────────────────────────
@@ -55,6 +71,14 @@ export const matchQuery = (id: string) =>
     queryKey: ["matches", "detail", id] as const,
     queryFn: () => fetchMatch(id),
     enabled: Boolean(id),
+  });
+
+export const healthQuery = () =>
+  queryOptions({
+    queryKey: ["health"] as const,
+    queryFn: fetchHealth,
+    staleTime: 0,
+    retry: false,
   });
 
 // ──────────────────────────────────────────────
