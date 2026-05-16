@@ -1,4 +1,4 @@
-import { BottomTab } from "./_components/BottomTab";
+import { BottomTab } from "@/components/common/BottomTab";
 
 export default function B2CLayout({
   children,
@@ -7,7 +7,7 @@ export default function B2CLayout({
 }) {
   return (
     <div className="flex min-h-svh flex-col">
-      <div className="flex-1 pb-16">{children}</div>
+      <div className="flex-1 pb-[90px]">{children}</div>
       <BottomTab />
     </div>
   );

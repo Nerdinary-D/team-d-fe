@@ -40,6 +40,7 @@
   --text-caption--letter-spacing: 0;
   --color-main: #0ebd7a;
   --color-sub: #b3f73f;
+  --color-gray-300: #d4d3d8;
   --color-primary-100: var(--color-main);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
