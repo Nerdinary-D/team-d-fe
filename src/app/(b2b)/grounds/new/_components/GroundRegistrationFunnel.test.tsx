@@ -4,8 +4,12 @@ import userEvent from '@testing-library/user-event';
 import { GroundRegistrationFunnel } from './GroundRegistrationFunnel';
 
 describe('GroundRegistrationFunnel', () => {
-  const openAddressSearch = async (user: ReturnType<typeof userEvent.setup>) => {
-    await user.click(screen.getByPlaceholderText('예: 서울시 은평구 연서로 36'));
+  const openAddressSearch = async (
+    user: ReturnType<typeof userEvent.setup>,
+  ) => {
+    await user.click(
+      screen.getByPlaceholderText('예: 서울시 은평구 연서로 36'),
+    );
     expect(
       screen.getByRole('dialog', { name: '주소 검색' }),
     ).toBeInTheDocument();
@@ -108,7 +112,9 @@ describe('GroundRegistrationFunnel', () => {
     render(<GroundRegistrationFunnel />);
 
     await openAddressSearch(user);
-    expect(await screen.findByTitle('우편번호 검색 프레임')).toBeInTheDocument();
+    expect(
+      await screen.findByTitle('우편번호 검색 프레임'),
+    ).toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: 'Close' }));
 
