@@ -6,6 +6,14 @@ import type { FacilityBadgeVariant } from './_components/FacilityBadge';
 // Types
 // ──────────────────────────────────────────────
 
+export type MemberRole = 'ROLE_CUSTOMER' | 'ROLE_OWNER';
+
+export type Member = {
+  uuid: string;
+  role: MemberRole;
+  nickname: string;
+};
+
 export type RecommendedFacility = {
   id: string;
   name: string;
@@ -87,6 +95,11 @@ const CURATION_BADGE: Partial<Record<string, FacilityBadgeVariant>> = {
 // HTTP calls
 // ──────────────────────────────────────────────
 
+async function fetchMember(uuid: string): Promise<Member> {
+  const { data } = await api.get<Member>(`/api/v1/members/${uuid}`);
+  return data;
+}
+
 function recommendedFacilityToHomeFacility(
   facility: RecommendedFacilityResponse,
 ): RecommendedFacility {
@@ -121,6 +134,13 @@ async function fetchRecommendedFacilities(
 // ──────────────────────────────────────────────
 // queryOptions
 // ──────────────────────────────────────────────
+
+export const memberQuery = (uuid: string | null) =>
+  queryOptions({
+    queryKey: ['member', uuid] as const,
+    queryFn: () => fetchMember(uuid as string),
+    enabled: Boolean(uuid),
+  });
 
 export const recommendedFacilitiesQuery = (
   uuid: string,

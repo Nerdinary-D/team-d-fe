@@ -7,6 +7,7 @@ import { api } from '@/lib/axios';
 // ──────────────────────────────────────────────
 
 export type CustomerLoginPayload = {
+  nickname: string;
   curations: Curation[];
 };
 

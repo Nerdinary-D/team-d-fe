@@ -1,13 +1,14 @@
 'use client';
 
-import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import Image from 'next/image';
+import { useState } from 'react';
+import { useToggleLike } from '@/api/likes';
 import { EmptyState } from '@/components/common/EmptyState';
 import { LocationSelector } from '@/components/common/LocationSelector';
 import { SkeletonText } from '@/components/common/Skeleton';
-import { useToggleLike } from '@/api/likes';
 import { getOwnerUuid } from '@/lib/uuid';
-import { recommendedFacilitiesQuery } from '../_fetch';
+import { memberQuery, recommendedFacilitiesQuery } from '../_fetch';
 import { FacilityCard } from './FacilityCard';
 import type { FacilityRegion, RecommendedFacility } from '../_fetch';
 
@@ -99,19 +100,18 @@ function HomeFacilityCard({
 }
 
 export type HomePageProps = {
-  userName?: string;
-  groundOwnerName?: string;
   location?: string;
   facilities?: HomeFacility[];
 };
 
 export function HomePage({
-  userName = '000',
-  groundOwnerName = '00',
   location = '서울',
   facilities,
 }: HomePageProps) {
   const [uuid] = useState(() => getOwnerUuid() ?? '');
+  const { data: member } = useQuery(memberQuery(uuid || null));
+  const nickname = member?.nickname ?? '00';
+
   const [selectedLocation, setSelectedLocation] = useState(location);
   const selectedRegion = LOCATION_REGION[selectedLocation];
   const recommendedFacilities = useQuery(
@@ -144,11 +144,17 @@ export function HomePage({
   const header = (
     <header className="sticky top-0 z-10 flex flex-col gap-[17px] bg-white px-4 pt-6">
       <div className="flex flex-col gap-[5px]">
-        <h1 className="text-header2 text-gray-900">
-          {userName}님, 환영해요 😀
+        <h1>
+          <Image
+            src="/icons/logo.svg"
+            alt="안심 그라운드"
+            width={157}
+            height={23}
+            priority
+          />
         </h1>
         <p className="text-header2 text-gray-900">
-          <span>{groundOwnerName}님을 위한 </span>
+          <span>{nickname}님을 위한 </span>
           <span className="text-main">안심 그라운드</span>
         </p>
       </div>
