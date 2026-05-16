@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { EmptyState } from '@/components/common/EmptyState';
 import { PageContainer } from '@/components/common/PageContainer';
 import { SkeletonText } from '@/components/common/Skeleton';
+import { HealthCheckPanel } from './_components/HealthCheckPanel';
 import { MatchCard } from './_components/MatchCard';
 import { matchesQuery } from './_fetch';
 
@@ -47,6 +48,7 @@ export default function MatchesPage() {
   return (
     <PageContainer as="main" size="md">
       {header}
+      <HealthCheckPanel />
       {body}
     </PageContainer>
   );
