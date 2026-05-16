@@ -3,53 +3,54 @@
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 
-type NaverLatLng = object;
-type NaverMap = object;
-type NaverMarker = { setMap: (map: NaverMap | null) => void };
+type KakaoLatLng = object;
+type KakaoMap = object;
+type KakaoMarker = { setMap: (map: KakaoMap | null) => void };
 
-type NaverMapsSdk = {
+type KakaoMapsSdk = {
+  LatLng: new (lat: number, lng: number) => KakaoLatLng;
   Map: new (
     container: HTMLElement,
-    options: { center: NaverLatLng; zoom?: number },
-  ) => NaverMap;
-  LatLng: new (lat: number, lng: number) => NaverLatLng;
-  Marker: new (options: { position: NaverLatLng }) => NaverMarker;
+    options: { center: KakaoLatLng; level?: number },
+  ) => KakaoMap;
+  Marker: new (options: { position: KakaoLatLng }) => KakaoMarker;
+  load: (callback: () => void) => void;
 };
 
 declare global {
   interface Window {
-    naver?: { maps: NaverMapsSdk };
+    kakao?: { maps: KakaoMapsSdk };
   }
 }
 
-let sdkPromise: Promise<NaverMapsSdk> | null = null;
+let sdkPromise: Promise<KakaoMapsSdk> | null = null;
 
-function loadNaverMapSdk(clientId: string): Promise<NaverMapsSdk> {
+function loadKakaoMapSdk(appKey: string): Promise<KakaoMapsSdk> {
   if (sdkPromise) return sdkPromise;
 
   sdkPromise = new Promise((resolve, reject) => {
     if (typeof window === "undefined") {
-      reject(new Error("Naver Map SDK는 브라우저에서만 로드할 수 있습니다."));
+      reject(new Error("Kakao Map SDK는 브라우저에서만 로드할 수 있습니다."));
       return;
     }
 
     const ready = () => {
-      const maps = window.naver?.maps;
+      const maps = window.kakao?.maps;
       if (!maps) {
         sdkPromise = null;
-        reject(new Error("Naver Map SDK는 로드됐지만 window.naver.maps 가 없습니다."));
+        reject(new Error("Kakao Map SDK는 로드됐지만 window.kakao.maps 가 없습니다."));
         return;
       }
-      resolve(maps);
+      maps.load(() => resolve(maps));
     };
 
-    if (window.naver?.maps) {
+    if (window.kakao?.maps) {
       ready();
       return;
     }
 
     const existing = document.querySelector<HTMLScriptElement>(
-      "script[data-naver-map-sdk='true']",
+      "script[data-kakao-map-sdk='true']",
     );
     if (existing) {
       existing.addEventListener("load", ready, { once: true });
@@ -57,7 +58,7 @@ function loadNaverMapSdk(clientId: string): Promise<NaverMapsSdk> {
         "error",
         () => {
           sdkPromise = null;
-          reject(new Error("Naver Map SDK 로드 실패"));
+          reject(new Error("Kakao Map SDK 로드 실패"));
         },
         { once: true },
       );
@@ -65,17 +66,17 @@ function loadNaverMapSdk(clientId: string): Promise<NaverMapsSdk> {
     }
 
     const script = document.createElement("script");
-    script.src = `https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=${encodeURIComponent(
-      clientId,
-    )}`;
+    script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${encodeURIComponent(
+      appKey,
+    )}&autoload=false`;
     script.async = true;
-    script.dataset.naverMapSdk = "true";
+    script.dataset.kakaoMapSdk = "true";
     script.addEventListener("load", ready, { once: true });
     script.addEventListener(
       "error",
       () => {
         sdkPromise = null;
-        reject(new Error("Naver Map SDK 로드 실패"));
+        reject(new Error("Kakao Map SDK 로드 실패"));
       },
       { once: true },
     );
@@ -88,30 +89,30 @@ function loadNaverMapSdk(clientId: string): Promise<NaverMapsSdk> {
 export type SpotMapProps = {
   latitude: number;
   longitude: number;
-  zoom?: number;
+  level?: number;
   className?: string;
 };
 
 export function SpotMap({
   latitude,
   longitude,
-  zoom = 16,
+  level = 3,
   className,
 }: SpotMapProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const clientId = process.env.NEXT_PUBLIC_NAVER_MAP_CLIENT_ID;
+  const appKey = process.env.NEXT_PUBLIC_KAKAO_MAP_KEY;
 
   useEffect(() => {
-    if (!clientId) return;
+    if (!appKey) return;
 
     let cancelled = false;
 
-    loadNaverMapSdk(clientId)
+    loadKakaoMapSdk(appKey)
       .then((maps) => {
         if (cancelled || !containerRef.current) return;
         const center = new maps.LatLng(latitude, longitude);
-        const map = new maps.Map(containerRef.current, { center, zoom });
+        const map = new maps.Map(containerRef.current, { center, level });
         const marker = new maps.Marker({ position: center });
         marker.setMap(map);
       })
@@ -123,17 +124,17 @@ export function SpotMap({
     return () => {
       cancelled = true;
     };
-  }, [clientId, latitude, longitude, zoom]);
+  }, [appKey, latitude, longitude, level]);
 
   const fallbackClassName = cn(
     "flex h-72 items-center justify-center rounded-md border border-dashed px-4 text-center text-sm text-muted-foreground",
     className,
   );
 
-  if (!clientId) {
+  if (!appKey) {
     return (
       <div className={fallbackClassName}>
-        NEXT_PUBLIC_NAVER_MAP_CLIENT_ID 가 설정되지 않았습니다.
+        NEXT_PUBLIC_KAKAO_MAP_KEY 가 설정되지 않았습니다.
       </div>
     );
   }
