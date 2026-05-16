@@ -1,6 +1,13 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { PostCard, type PostCardProps } from './PostCard';
+
+const push = vi.hoisted(() => vi.fn());
+
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({ push }),
+}));
 
 const props: PostCardProps = {
   title: '함께 풋살하실 분 구합니다',
@@ -29,5 +36,35 @@ describe('PostCard', () => {
     expect(link).toHaveAttribute('href', props.openChatUrl);
     expect(link).toHaveAttribute('target', '_blank');
     expect(link).toHaveAttribute('rel', expect.stringContaining('noopener'));
+  });
+
+  it('href가 주어지면 카드 본문 클릭으로 해당 경로로 이동한다', async () => {
+    const user = userEvent.setup();
+    push.mockClear();
+    render(<PostCard {...props} href="/spots/42" />);
+
+    await user.click(screen.getByText(props.title));
+
+    expect(push).toHaveBeenCalledWith('/spots/42');
+  });
+
+  it('href가 있어도 오픈채팅 버튼 클릭은 라우팅을 발생시키지 않는다', async () => {
+    const user = userEvent.setup();
+    push.mockClear();
+    render(<PostCard {...props} href="/spots/42" />);
+
+    const chatAnchor = screen
+      .getAllByRole('link')
+      .find((el) => el.getAttribute('href') === props.openChatUrl);
+    expect(chatAnchor).toBeDefined();
+    await user.click(chatAnchor!);
+
+    expect(push).not.toHaveBeenCalled();
+  });
+
+  it('href가 없으면 카드에 link role을 부여하지 않는다', () => {
+    render(<PostCard {...props} />);
+    const cardLink = screen.queryByRole('link', { name: props.title });
+    expect(cardLink).toBeNull();
   });
 });

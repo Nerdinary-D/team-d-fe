@@ -15,7 +15,9 @@ export function MateView() {
   const header = (
     <header className="sticky top-0 z-10 flex flex-col gap-2 bg-white px-4 pt-6">
       <h1 className="text-header2 text-black">지금 모집 중인 그라운드 🔥</h1>
-      <LocationSelector location={city} onLocationChange={setCity} />
+      <div className="flex h-6">
+        <LocationSelector location={city} onLocationChange={setCity} />
+      </div>
       <div
         aria-hidden
         className="pointer-events-none absolute inset-x-0 top-full h-3 bg-gradient-to-b from-white to-transparent"
@@ -60,6 +62,7 @@ export function MateView() {
             schedule={post.schedule}
             content={post.content}
             openChatUrl={post.openChatUrl}
+            href={`/spots/${post.facilityId}`}
           />
         ))}
       </div>

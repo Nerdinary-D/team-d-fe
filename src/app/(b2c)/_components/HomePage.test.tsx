@@ -21,7 +21,9 @@ vi.mock('@/lib/axios', () => ({
   },
 }));
 
-const testFacilities = [
+import type { RecommendedFacility } from '../_fetch';
+
+const testFacilities: RecommendedFacility[] = [
   {
     id: 'recommended-1',
     name: '시설 명',
@@ -49,7 +51,7 @@ const testFacilities = [
     badges: ['accessibleParking'],
     isFavorite: false,
   },
-] as const;
+];
 
 function renderHome(ui = <HomePage facilities={[...testFacilities]} />) {
   const queryClient = new QueryClient({
