@@ -4,9 +4,11 @@ import { useState } from 'react';
 import type { ChangeEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { BottomCTA } from '@/components/common/BottomCTA';
+import { getOrCreateClientUuid } from '@/lib/uuid';
 import { OnboardingProgress } from '../OnboardingProgress';
 import {
   DISABILITY_OPTIONS,
+  ONBOARDING_PROGRESS_STEP_COUNT,
   STEPS,
   initialFormState,
 } from './OnboardingFunnel.constants';
@@ -15,9 +17,13 @@ import type {
   OnboardingDisabilityRequirement,
   OnboardingMode,
 } from './OnboardingFunnel.types';
+import { OnboardingCompleteStep } from './OnboardingCompleteStep';
 import { OnboardingDisabilityStep } from './OnboardingDisabilityStep';
 import { OnboardingModeStep } from './OnboardingModeStep';
 import { OnboardingProfileStep } from './OnboardingProfileStep';
+
+const OWNER_GROUND_REGISTRATION_ROUTE = '/grounds/new';
+const USER_HOME_ROUTE = '/';
 
 export function OnboardingFunnel() {
   const router = useRouter();
@@ -25,15 +31,21 @@ export function OnboardingFunnel() {
   const [formState, setFormState] = useState(initialFormState);
 
   const currentStep = STEPS[currentStepIndex];
-  const currentStepNumber = currentStepIndex + 1;
-  const isLastStep = currentStepIndex === STEPS.length - 1;
+  const currentStepNumber = Math.min(
+    currentStepIndex + 1,
+    ONBOARDING_PROGRESS_STEP_COUNT,
+  );
+  const isModeStep = currentStep === 'mode';
+  const isCompleteStep = currentStep === 'complete';
+  const isProfileStep = currentStep === 'profile';
   const selectedDisabilityTypes = formState.disabilityTypes ?? [];
   const canProceed =
+    isCompleteStep ||
     (currentStep === 'mode' && Boolean(formState.mode)) ||
     (currentStep === 'disability' &&
       selectedDisabilityTypes.length > 0 &&
       formState.requirements.length > 0) ||
-    (currentStep === 'profile' && formState.nickname.trim().length > 0);
+    (isProfileStep && formState.nickname.trim().length > 0);
 
   const handleModeSelect = (mode: OnboardingMode) => {
     setFormState((current) => ({ ...current, mode }));
@@ -92,9 +104,21 @@ export function OnboardingFunnel() {
       return;
     }
 
-    if (isLastStep) {
+    if (isModeStep && formState.mode === 'owner') {
+      getOrCreateClientUuid();
+      router.replace(OWNER_GROUND_REGISTRATION_ROUTE);
+      return;
+    }
+
+    if (isCompleteStep) {
+      getOrCreateClientUuid();
+      router.replace(USER_HOME_ROUTE);
+      return;
+    }
+
+    if (isProfileStep) {
       saveOnboardingForm(formState);
-      router.replace('/splash');
+      setCurrentStepIndex((current) => Math.min(current + 1, STEPS.length - 1));
       return;
     }
 
@@ -105,7 +129,7 @@ export function OnboardingFunnel() {
     <div className="mt-[29px]">
       <OnboardingProgress
         currentStep={currentStepNumber}
-        totalSteps={STEPS.length}
+        totalSteps={ONBOARDING_PROGRESS_STEP_COUNT}
       />
     </div>
   );
@@ -131,9 +155,14 @@ export function OnboardingFunnel() {
         onNicknameChange={handleNicknameChange}
       />
     ),
+    complete: <OnboardingCompleteStep />,
   }[currentStep];
 
-  const ctaLabel = isLastStep ? '완료' : '다음';
+  const ctaLabel = isCompleteStep
+    ? '시작하기'
+    : isProfileStep
+      ? '완료'
+      : '다음';
 
   const navigation = (
     <BottomCTA type="button" disabled={!canProceed} onClick={handleNext}>
@@ -142,8 +171,8 @@ export function OnboardingFunnel() {
   );
 
   const funnel = (
-    <main className="mx-auto flex h-dvh w-full max-w-[360px] flex-col overflow-hidden bg-white px-4 pb-[99px]">
-      {progress}
+    <main className="relative mx-auto flex h-dvh w-full max-w-[360px] flex-col overflow-hidden bg-white px-4 pb-[99px]">
+      {!isCompleteStep && progress}
       {currentStepContent}
       {navigation}
     </main>

@@ -7,7 +7,14 @@ import type {
 
 export const ONBOARDING_STORAGE_KEY = 'allground:onboarding';
 
-export const STEPS: OnboardingStep[] = ['mode', 'disability', 'profile'];
+export const ONBOARDING_PROGRESS_STEP_COUNT = 3;
+
+export const STEPS: OnboardingStep[] = [
+  'mode',
+  'disability',
+  'profile',
+  'complete',
+];
 
 export const initialFormState: OnboardingFormState = {
   disabilityTypes: [],
