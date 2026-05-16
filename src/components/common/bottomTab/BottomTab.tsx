@@ -92,7 +92,7 @@ export function BottomTab({
         href={tab.href}
         aria-current={isActive ? 'page' : undefined}
         className={cn(
-          'flex h-[52px] w-[50px] flex-col items-center gap-2.5 text-center [font-size:11px] leading-[1.4] font-semibold tracking-[-0.025em]',
+          'mx-auto flex h-[52px] w-full min-w-0 max-w-[72px] flex-col items-center gap-2.5 text-center [font-size:11px] leading-[1.4] font-semibold tracking-normal',
           isActive ? 'text-main' : 'text-gray-300',
         )}
       >
@@ -105,7 +105,7 @@ export function BottomTab({
   return (
     <nav
       aria-label="메인 네비게이션"
-      className="fixed bottom-0 left-1/2 z-10 flex h-[90px] w-full max-w-[360px] -translate-x-1/2 items-start justify-center gap-[68px] rounded-t-[32px] bg-white pt-3 shadow-[0_-1px_5px_rgba(0,0,0,0.15)]"
+      className="fixed bottom-0 left-1/2 z-10 grid h-[90px] w-full max-w-none -translate-x-1/2 grid-cols-3 items-start rounded-t-[32px] bg-white px-6 pt-3 shadow-[0_-1px_5px_rgba(0,0,0,0.15)]"
     >
       {tabItems}
     </nav>

@@ -246,7 +246,7 @@ describe('OnboardingFunnel', () => {
     expect(screen.getByRole('button', { name: '완료' })).toBeEnabled();
   });
 
-  it('완료하면 온보딩 입력값을 저장하고 매칭 목록으로 이동한다', async () => {
+  it('완료하면 온보딩 입력값을 저장하고 스플래시로 이동한다', async () => {
     const user = userEvent.setup();
     render(<OnboardingFunnel />);
 

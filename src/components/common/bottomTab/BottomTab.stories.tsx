@@ -22,7 +22,7 @@ type Story = StoryObj<typeof meta>;
 
 export const HomeActive: Story = {
   args: {
-    activePathname: '/',
+    activePathname: '/my',
   },
 };
 

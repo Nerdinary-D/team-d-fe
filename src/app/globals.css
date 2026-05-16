@@ -39,6 +39,8 @@
   --text-caption--line-height: 1.4;
   --text-caption--letter-spacing: 0;
   --color-main: #0ebd7a;
+  --color-main-dark: #02653f;
+  --color-facility-badge: #eef9f5;
   --color-sub: #073e1e;
   --color-gray-100: #f4f4f4;
   --color-gray-300: #d9d9d9;
@@ -46,6 +48,7 @@
   --color-gray-500: #7c7c7c;
   --color-gray-600: #555555;
   --color-gray-800: #1f1f1f;
+  --color-gray-900: #121212;
   --color-chat-bg: #ffe656;
   --color-chat-fg: #392002;
   --color-chip-bg: #eef9f5;
@@ -178,6 +181,15 @@
 }
 
 @layer utilities {
+  .scrollbar-hidden {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hidden::-webkit-scrollbar {
+    display: none;
+  }
+
   .scrollbar-none {
     -ms-overflow-style: none;
     scrollbar-width: none;

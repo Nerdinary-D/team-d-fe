@@ -12,23 +12,22 @@ export function LikeButton({
   onToggleLike,
   className,
 }: LikeButtonProps) {
+  const iconSrc = isLiked
+    ? '/icons/heart-select.svg'
+    : '/icons/heart-none-select.svg';
+  const buttonLabel = isLiked ? '찜 해제' : '찜하기';
+  const icon = <Image src={iconSrc} alt="" width={24} height={24} />;
+
   return (
     <Button
       variant="icon"
       size="icon"
       onClick={onToggleLike}
-      aria-label={isLiked ? '찜 해제' : '찜하기'}
+      aria-label={buttonLabel}
       aria-pressed={isLiked}
       className={className}
     >
-      <Image
-        src={
-          isLiked ? '/icons/heart-select.svg' : '/icons/heart-none-select.svg'
-        }
-        alt=""
-        width={24}
-        height={24}
-      />
+      {icon}
     </Button>
   );
 }

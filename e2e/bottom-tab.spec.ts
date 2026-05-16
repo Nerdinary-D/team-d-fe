@@ -1,6 +1,8 @@
 import { expect, test } from '@playwright/test';
+import { seedOwnerUuid } from './auth';
 
 test('하단 탭으로 홈 ↔ 마이 페이지를 오갈 수 있다', async ({ page }) => {
+  await seedOwnerUuid(page);
   await page.goto('/');
 
   const nav = page.getByRole('navigation', { name: '메인 네비게이션' });
@@ -13,6 +15,7 @@ test('하단 탭으로 홈 ↔ 마이 페이지를 오갈 수 있다', async ({ 
   await expect(nav).toHaveCSS('border-top-right-radius', '32px');
   await expect(homeTab).toHaveClass(/text-main/);
   await expect(mateTab).toHaveClass(/text-gray-300/);
+  await expect(mateTab).toHaveAttribute('href', '/mate');
 
   await myTab.click();
   await expect(page).toHaveURL('/my');
