@@ -1,9 +1,11 @@
+import type { FacilityBadgeVariant } from '@/app/(b2c)/_components/FacilityBadge';
+
 // FIXME: 백엔드 enum 전체 카테고리 확정되면 갱신
 export const CATEGORY_LABEL: Record<string, string> = {
   BADMINTON: '배드민턴',
 };
 
-// 백엔드 Curation enum → 사용자 노출용 한글 라벨
+// 백엔드 Curation enum -> 사용자 노출용 한글 라벨
 // 출처: 백엔드 enum description ("#태그" 부분에 해당)
 export const CURATION_LABEL: Record<string, string> = {
   NO_STEP_COURT_ENTRY: '단차 없는 코트 진입',
@@ -19,4 +21,22 @@ export const CURATION_LABEL: Record<string, string> = {
   LOW_STIMULUS_ENVIRONMENT: '저자극 차분한 환경',
   PRIVATE_SPACE: '프라이빗 독립 공간',
   CERTIFIED_INSTRUCTOR: '장애인 전문 지도사',
+};
+
+export const CURATION_BADGE_VARIANT: Partial<
+  Record<string, FacilityBadgeVariant>
+> = {
+  NO_STEP_COURT_ENTRY: 'courtAccess',
+  SPORTS_WHEELCHAIR_RENTAL: 'wheelchairRental',
+  ACCESSIBLE_SHOWER_ROOM: 'privateShower',
+  GUIDE_DOG_ALLOWED: 'guideDogWelcome',
+  BRAILLE_INFRASTRUCTURE: 'brailleGuide',
+  VERBAL_GUIDANCE: 'dedicatedStaff',
+  WRITTEN_COMMUNICATION: 'writtenCommunication',
+  VISUAL_MANUAL: 'visualGuide',
+  VISUAL_ALARM: 'emergencyVisualAlarm',
+  SIMPLE_SPORTS_RULE: 'simpleRules',
+  LOW_STIMULUS_ENVIRONMENT: 'quietEnvironment',
+  PRIVATE_SPACE: 'privateSpace',
+  CERTIFIED_INSTRUCTOR: 'professionalInstructor',
 };

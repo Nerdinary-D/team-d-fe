@@ -1,96 +1,147 @@
 'use client';
 
 import { FacilityCard } from '@/app/(b2c)/_components/FacilityCard';
+import {
+  curationsToDisabilityLabel,
+  LOCATION_LABEL_TO_REGION,
+  REGION_TO_LOCATION_LABEL,
+} from '@/api/customer-preferences';
+import { useToggleLike } from '@/api/likes';
+import { EmptyState } from '@/components/common/EmptyState';
 import { LocationSelector } from '@/components/common/LocationSelector';
 import { PageContainer } from '@/components/common/PageContainer';
+import { SkeletonText } from '@/components/common/Skeleton';
+import { toast } from '@/components/common/Toast';
 import { cn } from '@/lib/utils';
+import { getOwnerUuid } from '@/lib/uuid';
+import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
-import type { FacilityBadgeVariant } from '@/app/(b2c)/_components/FacilityBadge';
+import {
+  customerProfileQuery,
+  type LikedFacility,
+  likesMeQuery,
+  useUpdateCustomerRegion,
+} from '../_fetch';
 import { MyFilterChangeView } from './MyFilterChangeView';
-
-type FavoriteFacility = {
-  id: string;
-  name: string;
-  sportName: string;
-  imageSrc: string;
-  imageAlt: string;
-  badges: FacilityBadgeVariant[];
-  isFavorite: boolean;
-};
-
-const defaultFavoriteFacilities = [
-  {
-    id: 'favorite-1',
-    name: '시설 명',
-    sportName: '종목명',
-    imageSrc: '/images/home/facility-placeholder.svg',
-    imageAlt: '찜한 시설 이미지',
-    badges: [
-      'courtAccess',
-      'brailleGuide',
-      'writtenCommunication',
-      'visualGuide',
-    ],
-    isFavorite: true,
-  },
-  {
-    id: 'favorite-2',
-    name: '시설 명',
-    sportName: '종목명',
-    imageSrc: '/images/home/facility-placeholder.svg',
-    imageAlt: '찜한 시설 이미지',
-    badges: [
-      'courtAccess',
-      'brailleGuide',
-      'writtenCommunication',
-      'visualGuide',
-    ],
-    isFavorite: true,
-  },
-  {
-    id: 'favorite-3',
-    name: '시설 명',
-    sportName: '종목명',
-    imageSrc: '/images/home/facility-placeholder.svg',
-    imageAlt: '찜한 시설 이미지',
-    badges: [
-      'courtAccess',
-      'brailleGuide',
-      'writtenCommunication',
-      'visualGuide',
-    ],
-    isFavorite: true,
-  },
-] satisfies FavoriteFacility[];
 
 export type MyPageViewProps = {
   userName?: string;
   location?: string;
   disabilityLabel?: string;
-  favoriteFacilities?: FavoriteFacility[];
 };
+
+type LikedFacilityCardProps = {
+  facility: LikedFacility;
+  uuid: string;
+  onFavoriteRemoved: (facilityId: string) => void;
+  onFavoriteRestore: (facilityId: string) => void;
+};
+
+function LikedFacilityCard({
+  facility,
+  uuid,
+  onFavoriteRemoved,
+  onFavoriteRestore,
+}: LikedFacilityCardProps) {
+  const facilityId = Number(facility.id);
+  const toggleLike = useToggleLike(uuid, facilityId);
+
+  const handleFavoriteChange = (nextFavorite: boolean) => {
+    if (nextFavorite) return;
+
+    onFavoriteRemoved(facility.id);
+    if (!uuid || facilityId <= 0 || toggleLike.isPending) return;
+
+    toggleLike.mutate(true, {
+      onError: () => onFavoriteRestore(facility.id),
+    });
+  };
+
+  return (
+    <FacilityCard
+      name={facility.name}
+      sportName={facility.sportName}
+      imageSrc={facility.imageSrc}
+      imageAlt={facility.imageAlt}
+      badges={facility.badges}
+      isFavorite={facility.isFavorite}
+      onFavoriteChange={handleFavoriteChange}
+    />
+  );
+}
 
 export function MyPageView({
   userName = '너디너리',
   location = '서울',
   disabilityLabel = '발달장애',
-  favoriteFacilities = defaultFavoriteFacilities,
 }: MyPageViewProps) {
   const [isFilterChangeOpen, setIsFilterChangeOpen] = useState(false);
-  const [facilityItemsState, setFacilityItemsState] = useState<
-    FavoriteFacility[]
-  >(() => favoriteFacilities.map((facility) => ({ ...facility })));
+  const [uuid] = useState(() => getOwnerUuid() ?? '');
+  const [removedFacilityIds, setRemovedFacilityIds] = useState<string[]>([]);
+  const [pendingLocation, setPendingLocation] = useState<string | null>(null);
+  const updateRegion = useUpdateCustomerRegion(uuid);
+  const customerProfile = useQuery(customerProfileQuery(uuid));
+  const likedFacilities = useQuery(
+    likesMeQuery(uuid, {
+      page: 0,
+      size: 10,
+      sort: ['createdAt,DESC'],
+    }),
+  );
+  const profileLocation = customerProfile.data
+    ? REGION_TO_LOCATION_LABEL[customerProfile.data.region]
+    : location;
+  const currentLocation =
+    updateRegion.isPending && pendingLocation
+      ? pendingLocation
+      : profileLocation;
+  const currentDisabilityLabel = customerProfile.data
+    ? curationsToDisabilityLabel(
+        customerProfile.data.curations,
+        disabilityLabel,
+      )
+    : disabilityLabel;
 
-  const updateFacilityFavorite = (
-    facilityId: string,
-    nextFavorite: boolean,
-  ) => {
-    setFacilityItemsState((currentFacilities) =>
-      currentFacilities.map((facility) =>
-        facility.id === facilityId
-          ? { ...facility, isFavorite: nextFavorite }
-          : facility,
-      ),
+  const facilityItemsState = (likedFacilities.data?.content ?? []).filter(
+    (facility) => !removedFacilityIds.includes(facility.id),
+  );
+
+  const removeFacilityFavorite = (facilityId: string) => {
+    setRemovedFacilityIds((currentIds) =>
+      currentIds.includes(facilityId)
+        ? currentIds
+        : [...currentIds, facilityId],
+    );
+  };
+
+  const restoreFacilityFavorite = (facilityId: string) => {
+    setRemovedFacilityIds((currentIds) =>
+      currentIds.filter((currentId) => currentId !== facilityId),
+    );
+  };
+
+  const handleLocationChange = (nextLocation: string) => {
+    const region = LOCATION_LABEL_TO_REGION[nextLocation];
+    if (!uuid || !region || updateRegion.isPending) return;
+
+    setPendingLocation(nextLocation);
+    updateRegion.mutate(
+      { region },
+      {
+        onSuccess: () => {
+          toast.success('지역 설정이 완료되었어요!');
+        },
+        onError: (error) => {
+          toast.error(
+            error instanceof Error
+              ? error.message
+              : '지역 설정에 실패했어요. 잠시 후 다시 시도해주세요.',
+          );
+        },
+        onSettled: () => {
+          setPendingLocation(null);
+        },
+      },
     );
   };
 
@@ -103,8 +154,12 @@ export function MyPageView({
 
   const locationSetting = (
     <LocationSelector
-      location={location}
+      key={currentLocation}
+      location={currentLocation}
       triggerLabel="기본 지역 설정"
+      showSuccessToast={false}
+      onLocationChange={handleLocationChange}
+      disabled={updateRegion.isPending}
       className="mt-[22px]"
     />
   );
@@ -112,7 +167,7 @@ export function MyPageView({
   const curationStatus = (
     <section className="mt-[27px] flex h-[78px] items-center justify-between rounded-[5px] border border-main bg-facility-badge px-4">
       <p className="text-subtitle2 text-main">
-        <span className="block">현재 [{disabilityLabel}]</span>
+        <span className="block">현재 [{currentDisabilityLabel}]</span>
         <span className="block">맞춤 큐레이션 중이에요!</span>
       </p>
       <button
@@ -128,31 +183,66 @@ export function MyPageView({
   const divider = <div className="-mx-4 mt-[21px] h-3.5 bg-gray-100" />;
 
   const favoriteItems = facilityItemsState.map((facility) => (
-    <FacilityCard
+    <LikedFacilityCard
       key={facility.id}
-      name={facility.name}
-      sportName={facility.sportName}
-      imageSrc={facility.imageSrc}
-      imageAlt={facility.imageAlt}
-      badges={facility.badges}
-      isFavorite={facility.isFavorite}
-      onFavoriteChange={(nextFavorite) =>
-        updateFacilityFavorite(facility.id, nextFavorite)
-      }
+      facility={facility}
+      uuid={uuid}
+      onFavoriteRemoved={removeFacilityFavorite}
+      onFavoriteRestore={restoreFacilityFavorite}
     />
   ));
 
-  const favoritesSection = (
-    <section aria-labelledby="favorite-ground-title" className="pt-[21px]">
-      <h2 id="favorite-ground-title" className="text-header2 text-gray-900">
-        내가 찜한 그라운드
-      </h2>
+  const favoritesContent = (() => {
+    if (!uuid) {
+      return (
+        <EmptyState
+          title="찜한 그라운드가 없어요"
+          description="관심 있는 그라운드를 찜해보세요."
+          className="mt-[14px]"
+        />
+      );
+    }
+
+    if (likedFacilities.isLoading) {
+      return <SkeletonText lines={6} className="mt-[14px]" />;
+    }
+
+    if (likedFacilities.isError) {
+      return (
+        <EmptyState
+          title="찜한 그라운드를 불러오지 못했어요"
+          description="잠시 후 다시 시도해주세요."
+          className="mt-[14px]"
+        />
+      );
+    }
+
+    if (favoriteItems.length === 0) {
+      return (
+        <EmptyState
+          title="찜한 그라운드가 없어요"
+          description="관심 있는 그라운드를 찜해보세요."
+          className="mt-[14px]"
+        />
+      );
+    }
+
+    return (
       <div
         aria-label="찜한 그라운드 목록"
         className="mt-[14px] flex flex-col gap-[13px] pb-[30px]"
       >
         {favoriteItems}
       </div>
+    );
+  })();
+
+  const favoritesSection = (
+    <section aria-labelledby="favorite-ground-title" className="pt-[21px]">
+      <h2 id="favorite-ground-title" className="text-header2 text-gray-900">
+        내가 찜한 그라운드
+      </h2>
+      {favoritesContent}
     </section>
   );
 
@@ -177,7 +267,12 @@ export function MyPageView({
       >
         {content}
       </PageContainer>
-      {isFilterChangeOpen ? <MyFilterChangeView /> : null}
+      {isFilterChangeOpen ? (
+        <MyFilterChangeView
+          uuid={uuid}
+          onClose={() => setIsFilterChangeOpen(false)}
+        />
+      ) : null}
     </>
   );
 }

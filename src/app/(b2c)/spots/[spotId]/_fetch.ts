@@ -5,7 +5,7 @@ import {
 } from '@tanstack/react-query';
 import { api } from '@/lib/axios';
 import type { CreatePartnerPostInput, PartnerPost, Spot } from './_schema';
-import { CATEGORY_LABEL, CURATION_LABEL } from './_facility-map';
+import { CATEGORY_LABEL, CURATION_LABEL } from '@/api/facility-map';
 
 // ──────────────────────────────────────────────
 // Types
@@ -69,6 +69,14 @@ async function fetchFacility(facilityId: number): Promise<Facility> {
   return data;
 }
 
+function parseFacilityId(spotId: string): number {
+  const facilityId = Number(spotId);
+  if (!Number.isInteger(facilityId) || facilityId <= 0) {
+    throw new Error('유효하지 않은 시설 ID입니다.');
+  }
+  return facilityId;
+}
+
 function facilityToSpot(facility: Facility): Spot {
   const { address } = facility;
   const composedAddress = [
@@ -95,7 +103,7 @@ function facilityToSpot(facility: Facility): Spot {
 }
 
 async function fetchSpot(spotId: string): Promise<Spot> {
-  const facility = await fetchFacility(Number(spotId));
+  const facility = await fetchFacility(parseFacilityId(spotId));
   return facilityToSpot(facility);
 }
 
@@ -113,9 +121,10 @@ function matePostToPartnerPost(post: MatePostResponse): PartnerPost {
 }
 
 async function fetchPartnerPosts(spotId: string): Promise<PartnerPost[]> {
+  const facilityId = parseFacilityId(spotId);
   const { data } = await api.get<MatePagedResponse>('/api/v1/mates', {
     params: {
-      facilityId: Number(spotId),
+      facilityId,
       page: 0,
       size: 10,
       sort: 'createdAt,DESC',
@@ -127,9 +136,11 @@ async function fetchPartnerPosts(spotId: string): Promise<PartnerPost[]> {
 async function postPartnerPost(
   input: CreatePartnerPostInput,
 ): Promise<PartnerPost> {
+  const facilityId = parseFacilityId(input.spotId);
+
   // uuid 는 axios 인터셉터가 body 에 자동 주입.
   const { data } = await api.post<CreateMateResponse>('/api/v1/mates', {
-    facilityId: Number(input.spotId),
+    facilityId,
     title: input.title,
     meetingTime: input.schedule,
     content: input.content,

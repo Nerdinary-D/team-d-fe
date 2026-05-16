@@ -1,32 +1,10 @@
 import { useMutation } from '@tanstack/react-query';
+import type { Curation } from '@/api/customer-preferences';
 import { api } from '@/lib/axios';
 
 // ──────────────────────────────────────────────
 // Types
 // ──────────────────────────────────────────────
-
-export const CURATIONS = [
-  // 지체 장애
-  'NO_STEP_COURT_ENTRY',
-  'SPORTS_WHEELCHAIR_RENTAL',
-  'ACCESSIBLE_SHOWER_ROOM',
-  // 시각 장애
-  'GUIDE_DOG_ALLOWED',
-  'BRAILLE_INFRASTRUCTURE',
-  'VERBAL_GUIDANCE',
-  // 청각 장애
-  'WRITTEN_COMMUNICATION',
-  'VISUAL_MANUAL',
-  'VISUAL_ALARM',
-  // 발달 장애
-  'SIMPLE_SPORTS_RULE',
-  'LOW_STIMULUS_ENVIRONMENT',
-  'PRIVATE_SPACE',
-  // 공통 신뢰
-  'CERTIFIED_INSTRUCTOR',
-] as const;
-
-export type Curation = (typeof CURATIONS)[number];
 
 export type CustomerLoginPayload = {
   curations: Curation[];

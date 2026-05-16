@@ -6,12 +6,21 @@ import {
 } from '@/app/onboarding/_components/OnboardingFunnel/OnboardingFunnel.constants';
 import { OnboardingDisabilityStep } from '@/app/onboarding/_components/OnboardingFunnel/OnboardingDisabilityStep';
 import type { OnboardingDisabilityRequirement } from '@/app/onboarding/_components/OnboardingFunnel/OnboardingFunnel.types';
+import { mapRequirementsToCurations } from '@/api/customer-preferences';
 import { BottomCTA } from '@/components/common/BottomCTA';
+import { toast } from '@/components/common/Toast';
 import { useState } from 'react';
+import { useUpdateCustomerCurations } from '../_fetch';
 
-export function MyFilterChangeView() {
+export type MyFilterChangeViewProps = {
+  uuid: string;
+  onClose: () => void;
+};
+
+export function MyFilterChangeView({ uuid, onClose }: MyFilterChangeViewProps) {
   const [formState, setFormState] = useState(initialFormState);
   const selectedDisabilityTypes = formState.disabilityTypes ?? [];
+  const updateCurations = useUpdateCustomerCurations(uuid);
   const canProceed =
     selectedDisabilityTypes.length > 0 && formState.requirements.length > 0;
 
@@ -41,6 +50,28 @@ export function MyFilterChangeView() {
     });
   };
 
+  const handleSubmit = () => {
+    if (!uuid || !canProceed || updateCurations.isPending) return;
+
+    const curations = mapRequirementsToCurations(formState.requirements);
+    updateCurations.mutate(
+      { curations },
+      {
+        onSuccess: () => {
+          toast.success('필터 설정이 완료되었어요!');
+          onClose();
+        },
+        onError: (error) => {
+          toast.error(
+            error instanceof Error
+              ? error.message
+              : '필터 설정에 실패했어요. 잠시 후 다시 시도해주세요.',
+          );
+        },
+      },
+    );
+  };
+
   const handleRequirementCheckedChange = (
     requirement: OnboardingDisabilityRequirement,
     checked: boolean,
@@ -63,7 +94,14 @@ export function MyFilterChangeView() {
     />
   );
 
-  const cta = <BottomCTA disabled={!canProceed}>다음</BottomCTA>;
+  const cta = (
+    <BottomCTA
+      disabled={!canProceed || updateCurations.isPending}
+      onClick={handleSubmit}
+    >
+      {updateCurations.isPending ? '저장 중...' : '다음'}
+    </BottomCTA>
+  );
 
   return (
     <div

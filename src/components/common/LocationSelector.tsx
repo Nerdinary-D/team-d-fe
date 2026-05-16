@@ -34,12 +34,14 @@ export type LocationSelectorProps = Omit<
 > & {
   location: string;
   onLocationChange?: (next: string) => void;
+  showSuccessToast?: boolean;
   triggerLabel?: string;
 };
 
 export function LocationSelector({
   location,
   onLocationChange,
+  showSuccessToast = true,
   triggerLabel,
   className,
   ...props
@@ -182,10 +184,12 @@ export function LocationSelector({
               if (!isSelected) {
                 onLocationChange?.(option);
                 clearLocationToastTimeout();
-                locationToastTimeoutRef.current = setTimeout(() => {
-                  showToastPopup('지역 설정이 완료되었어요!');
-                  locationToastTimeoutRef.current = null;
-                }, LOCATION_TOAST_DELAY_MS);
+                if (showSuccessToast) {
+                  locationToastTimeoutRef.current = setTimeout(() => {
+                    showToastPopup('지역 설정이 완료되었어요!');
+                    locationToastTimeoutRef.current = null;
+                  }, LOCATION_TOAST_DELAY_MS);
+                }
               }
             }}
             className={cn(
