@@ -71,6 +71,9 @@ export function useToggleLike(uuid: string, facilityId: number) {
       queryClient.invalidateQueries({
         queryKey: likeStatusQuery(uuid, facilityId).queryKey,
       });
+      queryClient.invalidateQueries({
+        queryKey: ['likes', 'me', uuid],
+      });
     },
   });
 }

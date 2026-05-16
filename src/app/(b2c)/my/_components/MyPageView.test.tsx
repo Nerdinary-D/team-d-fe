@@ -7,9 +7,10 @@ import { MyPageView } from './MyPageView';
 
 const apiGet = vi.hoisted(() => vi.fn());
 const apiPatch = vi.hoisted(() => vi.fn());
+const apiDelete = vi.hoisted(() => vi.fn());
 
 vi.mock('@/lib/axios', () => ({
-  api: { get: apiGet, patch: apiPatch },
+  api: { delete: apiDelete, get: apiGet, patch: apiPatch },
 }));
 
 const ownerUuid = '3fa85f64-5717-4562-b3fc-2c963f66afa6';
@@ -141,6 +142,8 @@ describe('MyPageView', () => {
         });
       },
     );
+    apiDelete.mockReset();
+    apiDelete.mockResolvedValue({ data: 'OK' });
     window.localStorage.setItem('owner-uuid', ownerUuid);
   });
 
@@ -194,6 +197,11 @@ describe('MyPageView', () => {
     });
     await user.click(firstLikeButton);
 
+    await waitFor(() => {
+      expect(apiDelete).toHaveBeenCalledWith('/api/v1/likes', {
+        params: { uuid: ownerUuid, facilityId: 1 },
+      });
+    });
     expect(screen.queryByText('서울 배드민턴장')).not.toBeInTheDocument();
     expect(screen.getByText('찜한 그라운드가 없어요')).toBeInTheDocument();
   });

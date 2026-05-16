@@ -6,6 +6,7 @@ import {
   LOCATION_LABEL_TO_REGION,
   REGION_TO_LOCATION_LABEL,
 } from '@/api/customer-preferences';
+import { useToggleLike } from '@/api/likes';
 import { EmptyState } from '@/components/common/EmptyState';
 import { LocationSelector } from '@/components/common/LocationSelector';
 import { PageContainer } from '@/components/common/PageContainer';
@@ -17,6 +18,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import {
   customerProfileQuery,
+  type LikedFacility,
   likesMeQuery,
   useUpdateCustomerRegion,
 } from '../_fetch';
@@ -27,6 +29,46 @@ export type MyPageViewProps = {
   location?: string;
   disabilityLabel?: string;
 };
+
+type LikedFacilityCardProps = {
+  facility: LikedFacility;
+  uuid: string;
+  onFavoriteRemoved: (facilityId: string) => void;
+  onFavoriteRestore: (facilityId: string) => void;
+};
+
+function LikedFacilityCard({
+  facility,
+  uuid,
+  onFavoriteRemoved,
+  onFavoriteRestore,
+}: LikedFacilityCardProps) {
+  const facilityId = Number(facility.id);
+  const toggleLike = useToggleLike(uuid, facilityId);
+
+  const handleFavoriteChange = (nextFavorite: boolean) => {
+    if (nextFavorite) return;
+
+    onFavoriteRemoved(facility.id);
+    if (!uuid || facilityId <= 0 || toggleLike.isPending) return;
+
+    toggleLike.mutate(true, {
+      onError: () => onFavoriteRestore(facility.id),
+    });
+  };
+
+  return (
+    <FacilityCard
+      name={facility.name}
+      sportName={facility.sportName}
+      imageSrc={facility.imageSrc}
+      imageAlt={facility.imageAlt}
+      badges={facility.badges}
+      isFavorite={facility.isFavorite}
+      onFavoriteChange={handleFavoriteChange}
+    />
+  );
+}
 
 export function MyPageView({
   userName = '너디너리',
@@ -64,14 +106,18 @@ export function MyPageView({
     (facility) => !removedFacilityIds.includes(facility.id),
   );
 
-  // TODO: 백엔드가 찜 해제 요청에 content.uuid 사용 가능 여부를 확정하면 mutation으로 교체.
-  const updateFacilityFavorite = (
-    facilityId: string,
-    nextFavorite: boolean,
-  ) => {
-    if (!nextFavorite) {
-      setRemovedFacilityIds((currentIds) => [...currentIds, facilityId]);
-    }
+  const removeFacilityFavorite = (facilityId: string) => {
+    setRemovedFacilityIds((currentIds) =>
+      currentIds.includes(facilityId)
+        ? currentIds
+        : [...currentIds, facilityId],
+    );
+  };
+
+  const restoreFacilityFavorite = (facilityId: string) => {
+    setRemovedFacilityIds((currentIds) =>
+      currentIds.filter((currentId) => currentId !== facilityId),
+    );
   };
 
   const handleLocationChange = (nextLocation: string) => {
@@ -137,17 +183,12 @@ export function MyPageView({
   const divider = <div className="-mx-4 mt-[21px] h-3.5 bg-gray-100" />;
 
   const favoriteItems = facilityItemsState.map((facility) => (
-    <FacilityCard
+    <LikedFacilityCard
       key={facility.id}
-      name={facility.name}
-      sportName={facility.sportName}
-      imageSrc={facility.imageSrc}
-      imageAlt={facility.imageAlt}
-      badges={facility.badges}
-      isFavorite={facility.isFavorite}
-      onFavoriteChange={(nextFavorite) =>
-        updateFacilityFavorite(facility.id, nextFavorite)
-      }
+      facility={facility}
+      uuid={uuid}
+      onFavoriteRemoved={removeFacilityFavorite}
+      onFavoriteRestore={restoreFacilityFavorite}
     />
   ));
 
