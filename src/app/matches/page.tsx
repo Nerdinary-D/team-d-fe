@@ -45,7 +45,7 @@ export default function MatchesPage() {
   })();
 
   return (
-    <PageContainer as="main" size="md">
+    <PageContainer as="main">
       {header}
       {body}
     </PageContainer>
