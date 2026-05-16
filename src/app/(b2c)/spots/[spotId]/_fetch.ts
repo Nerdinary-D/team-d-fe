@@ -4,12 +4,6 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 import { api } from '@/lib/axios';
-export { likeStatusQuery, useToggleLike } from '@/api/likes';
-import {
-  addMockPartnerPost,
-  generateMockPostId,
-  getMockPartnerPosts,
-} from './_mock';
 import type { CreatePartnerPostInput, PartnerPost, Spot } from './_schema';
 import { CATEGORY_LABEL, CURATION_LABEL } from '@/api/facility-map';
 
@@ -37,6 +31,34 @@ type Facility = {
   curations: string[];
   address: FacilityAddress;
 };
+
+type MatePostResponse = {
+  facilityId: number;
+  title: string;
+  meetingTime: string;
+  content: string;
+  openchatLink: string;
+  createdAt: string;
+};
+
+type MatePagedResponse = {
+  content: MatePostResponse[];
+  currentPage: number;
+  size: number;
+  totalElements: number;
+  totalPages: number;
+  isFirst: boolean;
+  isLast: boolean;
+};
+
+type CreateMateResponse = {
+  uuid: string;
+  mateId: number;
+  createdAt: string;
+};
+
+// likes 관련 query/mutation 은 `@/api/likes` 로 추출되어 있음. 호출부 호환을 위해 재내보냄.
+export { likeStatusQuery, useToggleLike } from '@/api/likes';
 
 // ──────────────────────────────────────────────
 // HTTP calls
@@ -85,31 +107,55 @@ async function fetchSpot(spotId: string): Promise<Spot> {
   return facilityToSpot(facility);
 }
 
-// FIXME: 파트너 모집글 API 가 붙기 전까지 MOCK 유지
-function mockDelay() {
-  return new Promise<void>((resolve) => setTimeout(resolve, 200));
+function matePostToPartnerPost(post: MatePostResponse): PartnerPost {
+  return {
+    // GET 응답에 per-post id 가 없어 facilityId+createdAt 합성 키 사용
+    id: `${post.facilityId}-${post.createdAt}`,
+    spotId: String(post.facilityId),
+    title: post.title,
+    content: post.content,
+    schedule: post.meetingTime,
+    openChatUrl: post.openchatLink,
+    createdAt: post.createdAt,
+  };
 }
 
 async function fetchPartnerPosts(spotId: string): Promise<PartnerPost[]> {
-  await mockDelay();
-  return getMockPartnerPosts(spotId);
+  const facilityId = parseFacilityId(spotId);
+  const { data } = await api.get<MatePagedResponse>('/api/v1/mates', {
+    params: {
+      facilityId,
+      page: 0,
+      size: 10,
+      sort: 'createdAt,DESC',
+    },
+  });
+  return data.content.map(matePostToPartnerPost);
 }
 
 async function postPartnerPost(
   input: CreatePartnerPostInput,
 ): Promise<PartnerPost> {
-  await mockDelay();
-  const created: PartnerPost = {
-    id: generateMockPostId(),
+  const facilityId = parseFacilityId(input.spotId);
+
+  // uuid 는 axios 인터셉터가 body 에 자동 주입.
+  const { data } = await api.post<CreateMateResponse>('/api/v1/mates', {
+    facilityId,
+    title: input.title,
+    meetingTime: input.schedule,
+    content: input.content,
+    openchatLink: input.openChatUrl,
+  });
+
+  return {
+    id: String(data.mateId),
     spotId: input.spotId,
     title: input.title,
     content: input.content,
     schedule: input.schedule,
     openChatUrl: input.openChatUrl,
-    createdAt: new Date().toISOString(),
+    createdAt: data.createdAt,
   };
-  addMockPartnerPost(created);
-  return created;
 }
 
 // ──────────────────────────────────────────────

@@ -4,12 +4,20 @@ import userEvent from '@testing-library/user-event';
 import { OnboardingFunnel } from './OnboardingFunnel';
 
 const replace = vi.fn();
+const createCustomerMutation = vi.hoisted(() => ({
+  isPending: false,
+  mutate: vi.fn(),
+}));
 let storedItems: Record<string, string>;
 
 vi.mock('next/navigation', () => ({
   useRouter: () => ({
     replace,
   }),
+}));
+
+vi.mock('../../_fetch', () => ({
+  useCreateCustomer: () => createCustomerMutation,
 }));
 
 describe('OnboardingFunnel', () => {
@@ -31,6 +39,14 @@ describe('OnboardingFunnel', () => {
       },
     });
     replace.mockClear();
+    createCustomerMutation.isPending = false;
+    createCustomerMutation.mutate.mockReset();
+    createCustomerMutation.mutate.mockImplementation((_payload, options) => {
+      options?.onSuccess?.({
+        uuid: window.localStorage.getItem('client-uuid') ?? 'created-uuid',
+        createdAt: '2026-05-16T21:44:34.725Z',
+      });
+    });
   });
 
   it('첫 단계에서 스테이터스 바 없이 선택되지 않은 모드 선택 퍼널을 렌더링한다', () => {
@@ -103,6 +119,7 @@ describe('OnboardingFunnel', () => {
       expect.any(String),
     );
     expect(window.localStorage.getItem('owner-uuid')).toBeNull();
+    expect(createCustomerMutation.mutate).not.toHaveBeenCalled();
     expect(replace).toHaveBeenCalledWith('/grounds/new');
     expect(screen.queryByLabelText('2/3 단계')).not.toBeInTheDocument();
   });
@@ -314,6 +331,16 @@ describe('OnboardingFunnel', () => {
     await user.click(screen.getByRole('button', { name: '완료' }));
     await user.click(screen.getByRole('button', { name: '시작하기' }));
 
+    expect(createCustomerMutation.mutate).toHaveBeenCalledWith(
+      {
+        nickname: '너디너리',
+        curations: ['NO_STEP_COURT_ENTRY'],
+      },
+      expect.objectContaining({
+        onError: expect.any(Function),
+        onSuccess: expect.any(Function),
+      }),
+    );
     expect(window.localStorage.getItem('client-uuid')).toEqual(
       expect.any(String),
     );

@@ -4,7 +4,10 @@ import { useState } from 'react';
 import type { ChangeEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { BottomCTA } from '@/components/common/BottomCTA';
-import { getOrCreateClientUuid } from '@/lib/uuid';
+import { toast } from '@/components/common/Toast';
+import { getOrCreateClientUuid, setClientUuid } from '@/lib/uuid';
+import { mapRequirementsToCustomerCurations } from '../../_curation-map';
+import { useCreateCustomer } from '../../_fetch';
 import { OnboardingProgress } from '../OnboardingProgress';
 import {
   DISABILITY_OPTIONS,
@@ -27,6 +30,7 @@ const USER_HOME_ROUTE = '/';
 
 export function OnboardingFunnel() {
   const router = useRouter();
+  const createCustomer = useCreateCustomer();
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [formState, setFormState] = useState(initialFormState);
 
@@ -46,6 +50,8 @@ export function OnboardingFunnel() {
       selectedDisabilityTypes.length > 0 &&
       formState.requirements.length > 0) ||
     (isProfileStep && formState.nickname.trim().length > 0);
+  const isSubmittingCustomer = isCompleteStep && createCustomer.isPending;
+  const canClickCTA = canProceed && !isSubmittingCustomer;
 
   const handleModeSelect = (mode: OnboardingMode) => {
     setFormState((current) => ({ ...current, mode }));
@@ -100,7 +106,7 @@ export function OnboardingFunnel() {
   };
 
   const handleNext = () => {
-    if (!canProceed) {
+    if (!canClickCTA) {
       return;
     }
 
@@ -112,7 +118,25 @@ export function OnboardingFunnel() {
 
     if (isCompleteStep) {
       getOrCreateClientUuid();
-      router.replace(USER_HOME_ROUTE);
+      createCustomer.mutate(
+        {
+          nickname: formState.nickname.trim(),
+          curations: mapRequirementsToCustomerCurations(formState.requirements),
+        },
+        {
+          onSuccess: (result) => {
+            setClientUuid(result.uuid);
+            router.replace(USER_HOME_ROUTE);
+          },
+          onError: (error) => {
+            toast.error(
+              error instanceof Error
+                ? error.message
+                : '고객 정보를 생성하지 못했어요. 잠시 후 다시 시도해주세요.',
+            );
+          },
+        },
+      );
       return;
     }
 
@@ -159,13 +183,15 @@ export function OnboardingFunnel() {
   }[currentStep];
 
   const ctaLabel = isCompleteStep
-    ? '시작하기'
+    ? isSubmittingCustomer
+      ? '시작 중'
+      : '시작하기'
     : isProfileStep
       ? '완료'
       : '다음';
 
   const navigation = (
-    <BottomCTA type="button" disabled={!canProceed} onClick={handleNext}>
+    <BottomCTA type="button" disabled={!canClickCTA} onClick={handleNext}>
       {ctaLabel}
     </BottomCTA>
   );
