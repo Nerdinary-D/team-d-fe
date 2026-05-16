@@ -22,13 +22,13 @@ type Story = StoryObj<typeof meta>;
 
 export const HomeActive: Story = {
   args: {
-    activePathname: '/',
+    activePathname: '/my',
   },
 };
 
 export const MateActive: Story = {
   args: {
-    activePathname: '/matches',
+    activePathname: '/spots/1',
   },
 };
 

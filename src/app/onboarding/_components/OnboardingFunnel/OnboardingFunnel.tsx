@@ -94,7 +94,7 @@ export function OnboardingFunnel() {
 
     if (isLastStep) {
       saveOnboardingForm(formState);
-      router.replace('/matches');
+      router.replace('/');
       return;
     }
 
