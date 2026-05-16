@@ -9,69 +9,27 @@ import {
   Loader2Icon,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import {
-  useEffect,
-  useState,
-  type ComponentProps,
-  type CSSProperties,
-  type ReactNode,
-  type SVGProps,
-} from 'react';
+import type { ComponentProps, CSSProperties, ReactNode, SVGProps } from 'react';
 
 export { toast };
 
 const APP_TOAST_DURATION = 2000;
-const APP_TOAST_EVENT = 'app-toast:show';
-const APP_TOAST_HIDE_EVENT = 'app-toast:hide';
+const APP_TOAST_BOTTOM_OFFSET = 113;
+const APP_TOAST_OFFSET = { bottom: APP_TOAST_BOTTOM_OFFSET };
+const APP_TOAST_MOBILE_OFFSET = {
+  bottom: APP_TOAST_BOTTOM_OFFSET,
+  left: 0,
+  right: 0,
+};
 
 export function showToastPopup(message: string) {
-  window.dispatchEvent(new CustomEvent(APP_TOAST_EVENT, { detail: message }));
-  return message;
+  return toast.custom(() => <ToastPopup>{message}</ToastPopup>, {
+    duration: APP_TOAST_DURATION,
+  });
 }
 
 export function hideToastPopup() {
-  window.dispatchEvent(new Event(APP_TOAST_HIDE_EVENT));
-}
-
-export function AppToastViewport() {
-  const [message, setMessage] = useState<string | null>(null);
-
-  useEffect(() => {
-    const handleToast = (event: Event) => {
-      const customEvent = event as CustomEvent<string>;
-      setMessage(customEvent.detail);
-    };
-    const handleHideToast = () => setMessage(null);
-
-    window.addEventListener(APP_TOAST_EVENT, handleToast);
-    window.addEventListener(APP_TOAST_HIDE_EVENT, handleHideToast);
-    return () => {
-      window.removeEventListener(APP_TOAST_EVENT, handleToast);
-      window.removeEventListener(APP_TOAST_HIDE_EVENT, handleHideToast);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!message) {
-      return;
-    }
-
-    const timeoutId = window.setTimeout(
-      () => setMessage(null),
-      APP_TOAST_DURATION,
-    );
-    return () => window.clearTimeout(timeoutId);
-  }, [message]);
-
-  if (!message) {
-    return null;
-  }
-
-  return (
-    <ToastPopup className="fixed bottom-[113px] left-1/2 z-[100] -translate-x-1/2">
-      {message}
-    </ToastPopup>
-  );
+  toast.dismiss();
 }
 
 function ToastPopupCheckIcon(props: SVGProps<SVGSVGElement>) {
@@ -121,7 +79,7 @@ export function ToastPopup({
     <div
       role={role}
       className={cn(
-        'flex min-h-[60px] w-[calc(100vw-32px)] max-w-[328px] items-center gap-2.5 rounded-[10px] bg-main px-5 py-[18px]',
+        'mx-auto flex min-h-[60px] w-[calc(100vw-32px)] max-w-[328px] items-center gap-2.5 rounded-[10px] bg-main px-5 py-[18px]',
         className,
       )}
       {...props}
@@ -136,6 +94,9 @@ export function Toaster({ ...props }: ToasterProps) {
   return (
     <Sonner
       theme="system"
+      position="bottom-center"
+      offset={APP_TOAST_OFFSET}
+      mobileOffset={APP_TOAST_MOBILE_OFFSET}
       className="toaster group"
       icons={{
         success: <CircleCheckIcon className="size-4" />,

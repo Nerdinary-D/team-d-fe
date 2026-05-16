@@ -1,11 +1,18 @@
-import { act, render, screen } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
-import {
-  AppToastViewport,
-  hideToastPopup,
-  showToastPopup,
-  ToastPopup,
-} from './Toast';
+import { render, screen } from '@testing-library/react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+const toastCustom = vi.hoisted(() => vi.fn());
+const toastDismiss = vi.hoisted(() => vi.fn());
+
+vi.mock('sonner', () => ({
+  Toaster: () => null,
+  toast: Object.assign(vi.fn(), {
+    custom: toastCustom,
+    dismiss: toastDismiss,
+  }),
+}));
+
+import { hideToastPopup, showToastPopup, ToastPopup } from './Toast';
 
 describe('ToastPopup', () => {
   it('Figma 토스트 팝업 형태로 상태 메시지를 렌더링한다', () => {
@@ -48,38 +55,30 @@ describe('ToastPopup', () => {
     expect(screen.getByRole('alert')).toHaveTextContent('실패했습니다');
     expect(screen.getByTestId('custom-icon')).toBeInTheDocument();
   });
+});
 
-  it('showToastPopup은 Figma 위치에 고정된 앱 토스트를 띄운다', () => {
-    render(<AppToastViewport />);
-
-    let toastId = '';
-    act(() => {
-      toastId = showToastPopup('찜한 그라운드에 추가했어요.');
-    });
-
-    expect(toastId).toBe('찜한 그라운드에 추가했어요.');
-    const toastPopup = screen.getByRole('status');
-    expect(toastPopup).toHaveTextContent('찜한 그라운드에 추가했어요.');
-    expect(toastPopup).toHaveClass(
-      'fixed',
-      'bottom-[113px]',
-      'left-1/2',
-      '-translate-x-1/2',
-    );
+describe('showToastPopup / hideToastPopup', () => {
+  beforeEach(() => {
+    toastCustom.mockClear();
+    toastDismiss.mockClear();
   });
 
-  it('hideToastPopup은 표시 중인 앱 토스트를 닫는다', () => {
-    render(<AppToastViewport />);
+  it('showToastPopup은 sonner toast.custom으로 Figma 토스트를 띄운다', () => {
+    showToastPopup('찜한 그라운드에 추가했어요.');
 
-    act(() => {
-      showToastPopup('지역 설정이 완료되었어요!');
-    });
-    expect(screen.getByRole('status')).toBeInTheDocument();
+    expect(toastCustom).toHaveBeenCalledTimes(1);
+    const [renderFn, options] = toastCustom.mock.calls[0];
+    expect(options).toEqual({ duration: 2000 });
 
-    act(() => {
-      hideToastPopup();
-    });
+    render(renderFn());
+    const toastPopup = screen.getByRole('status');
+    expect(toastPopup).toHaveTextContent('찜한 그라운드에 추가했어요.');
+    expect(toastPopup).toHaveClass('bg-main', 'rounded-[10px]');
+  });
 
-    expect(screen.queryByRole('status')).not.toBeInTheDocument();
+  it('hideToastPopup은 sonner toast.dismiss를 호출한다', () => {
+    hideToastPopup();
+
+    expect(toastDismiss).toHaveBeenCalledTimes(1);
   });
 });
