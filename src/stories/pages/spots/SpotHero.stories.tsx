@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
+import { useState } from 'react';
 import { SpotHero } from '@/app/(b2c)/spots/[spotId]/_components/SpotHero';
 import { sampleSpot } from './fixtures';
 
@@ -23,4 +24,26 @@ export const SecondSlide: Story = {
   args: {
     activeIndex: 1,
   },
+};
+
+export const Liked: Story = {
+  args: {
+    isLiked: true,
+  },
+};
+
+function LikeToggleExample() {
+  const [isLiked, setIsLiked] = useState(false);
+  return (
+    <SpotHero
+      imageUrl={sampleSpot.imageUrl}
+      alt={sampleSpot.name}
+      isLiked={isLiked}
+      onToggleLike={() => setIsLiked((v) => !v)}
+    />
+  );
+}
+
+export const LikeToggle: Story = {
+  render: () => <LikeToggleExample />,
 };

@@ -1,8 +1,8 @@
 'use client';
 
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import { Button } from '@/components/common/Button';
+import { BackButton } from '@/components/common/BackButton';
+import { LikeButton } from '@/components/common/LikeButton';
 import { cn } from '@/lib/utils';
 
 export type SpotHeroProps = {
@@ -10,6 +10,8 @@ export type SpotHeroProps = {
   alt: string;
   dotsCount?: number;
   activeIndex?: number;
+  isLiked?: boolean;
+  onToggleLike?: () => void;
   className?: string;
 };
 
@@ -18,10 +20,10 @@ export function SpotHero({
   alt,
   dotsCount = 3,
   activeIndex = 0,
+  isLiked = false,
+  onToggleLike,
   className,
 }: SpotHeroProps) {
-  const router = useRouter();
-
   const dots = Array.from({ length: dotsCount }, (_, i) => (
     <span
       key={i}
@@ -32,18 +34,6 @@ export function SpotHero({
       )}
     />
   ));
-
-  const backButton = (
-    <Button
-      variant="icon"
-      size="icon"
-      onClick={() => router.back()}
-      aria-label="뒤로 가기"
-      className="absolute top-7 left-4"
-    >
-      <Image src="/icons/back.svg" alt="" width={24} height={24} />
-    </Button>
-  );
 
   return (
     <div className={cn('relative h-[260px] w-full overflow-hidden', className)}>
@@ -56,7 +46,12 @@ export function SpotHero({
         priority
         unoptimized
       />
-      {backButton}
+      <BackButton className="absolute top-7 left-4" />
+      <LikeButton
+        isLiked={isLiked}
+        onToggleLike={onToggleLike}
+        className="absolute top-7 right-4"
+      />
       <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-[10px]">
         {dots}
       </div>
