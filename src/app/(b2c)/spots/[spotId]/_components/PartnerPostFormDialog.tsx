@@ -10,17 +10,10 @@ import {
   BottomSheetHeader,
   BottomSheetTitle,
 } from '@/components/common/BottomSheet';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/common/Form';
-import { Input } from '@/components/common/Input';
+import { Form, FormField } from '@/components/common/Form';
+import { Textarea } from '@/components/common/Textarea';
+import { Textfield } from '@/components/common/Textfield';
 import { toast } from '@/components/common/Toast';
-import { cn } from '@/lib/utils';
 import { useCreatePartnerPost } from '../_fetch';
 import { CreatePartnerPostInputSchema } from '../_schema';
 
@@ -33,13 +26,6 @@ const DEFAULT_VALUES: FormValues = {
   content: '',
   openChatUrl: '',
 };
-
-const labelClass = 'text-body2 text-gray-500';
-const inputClass =
-  'h-auto rounded-[10px] border-gray-400 px-4 py-[15px] text-subtitle2 placeholder:text-gray-400';
-const textareaClass = cn(
-  'w-full min-w-0 rounded-[10px] border border-gray-400 px-4 py-[15px] text-subtitle2 outline-none transition-colors placeholder:text-gray-400 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20',
-);
 
 export type PartnerPostFormDialogProps = {
   spotId: string;
@@ -84,19 +70,14 @@ export function PartnerPostFormDialog({
     <FormField
       control={form.control}
       name="title"
-      render={({ field }) => (
-        <FormItem className="space-y-1.5">
-          <FormLabel className={labelClass}>제목</FormLabel>
-          <FormControl>
-            <Input
-              placeholder="예: 이번주 주말 같이 탁구치실 분!"
-              maxLength={50}
-              className={inputClass}
-              {...field}
-            />
-          </FormControl>
-          <FormMessage />
-        </FormItem>
+      render={({ field, fieldState }) => (
+        <Textfield
+          label="제목"
+          placeholder="예: 이번주 주말 같이 탁구치실 분!"
+          maxLength={50}
+          error={fieldState.error?.message}
+          {...field}
+        />
       )}
     />
   );
@@ -105,18 +86,13 @@ export function PartnerPostFormDialog({
     <FormField
       control={form.control}
       name="schedule"
-      render={({ field }) => (
-        <FormItem className="space-y-1.5">
-          <FormLabel className={labelClass}>날짜/시간</FormLabel>
-          <FormControl>
-            <Input
-              placeholder="예: 매주 월요일 오후 6시"
-              className={inputClass}
-              {...field}
-            />
-          </FormControl>
-          <FormMessage />
-        </FormItem>
+      render={({ field, fieldState }) => (
+        <Textfield
+          label="날짜/시간"
+          placeholder="예: 매주 월요일 오후 6시"
+          error={fieldState.error?.message}
+          {...field}
+        />
       )}
     />
   );
@@ -125,20 +101,15 @@ export function PartnerPostFormDialog({
     <FormField
       control={form.control}
       name="content"
-      render={({ field }) => (
-        <FormItem className="space-y-1.5">
-          <FormLabel className={labelClass}>모집 내용</FormLabel>
-          <FormControl>
-            <textarea
-              placeholder="모집내용을 자유롭게 입력해보세요."
-              rows={5}
-              maxLength={500}
-              {...field}
-              className={textareaClass}
-            />
-          </FormControl>
-          <FormMessage />
-        </FormItem>
+      render={({ field, fieldState }) => (
+        <Textarea
+          label="모집 내용"
+          placeholder="모집내용을 자유롭게 입력해보세요."
+          rows={5}
+          maxLength={500}
+          error={fieldState.error?.message}
+          {...field}
+        />
       )}
     />
   );
@@ -147,20 +118,15 @@ export function PartnerPostFormDialog({
     <FormField
       control={form.control}
       name="openChatUrl"
-      render={({ field }) => (
-        <FormItem className="space-y-1.5">
-          <FormLabel className={labelClass}>오픈 카카오톡 링크</FormLabel>
-          <FormControl>
-            <Input
-              placeholder="링크를 입력해주세요."
-              inputMode="url"
-              autoComplete="off"
-              className={inputClass}
-              {...field}
-            />
-          </FormControl>
-          <FormMessage />
-        </FormItem>
+      render={({ field, fieldState }) => (
+        <Textfield
+          label="오픈 카카오톡 링크"
+          placeholder="링크를 입력해주세요."
+          inputMode="url"
+          autoComplete="off"
+          error={fieldState.error?.message}
+          {...field}
+        />
       )}
     />
   );
