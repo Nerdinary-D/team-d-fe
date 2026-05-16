@@ -6,6 +6,11 @@ import { PartnerPostFormDialog } from '@/app/(b2c)/spots/[spotId]/_components/Pa
 const meta = {
   title: 'Pages/Spots/PartnerPostFormDialog',
   component: PartnerPostFormDialog,
+  args: {
+    spotId: '1',
+    open: false,
+    onOpenChange: () => {},
+  },
 } satisfies Meta<typeof PartnerPostFormDialog>;
 
 export default meta;
