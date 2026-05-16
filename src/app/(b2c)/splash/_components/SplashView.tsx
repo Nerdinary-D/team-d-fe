@@ -1,14 +1,14 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
-import { LoadingDots } from '@/components/common/LoadingDots';
 import { PageContainer } from '@/components/common/PageContainer';
 import { ONBOARDING_STORAGE_KEY } from '@/app/onboarding/_components/OnboardingFunnel/OnboardingFunnel.constants';
 import type { OnboardingFormState } from '@/app/onboarding/_components/OnboardingFunnel/OnboardingFunnel.types';
 import { mapRequirementsToCurations } from '@/api/customer-preferences';
-import { getOwnerUuid } from '@/lib/uuid';
+import { getClientUuid } from '@/lib/uuid';
 import { useLoginCustomer } from '../_fetch';
 
 const NEXT_ROUTE = '/';
@@ -39,7 +39,7 @@ export function SplashView() {
     triggeredRef.current = true;
 
     // 이미 가입된 사용자 — 서버에 재요청 없이 바로 홈으로
-    if (getOwnerUuid()) {
+    if (getClientUuid()) {
       router.replace(NEXT_ROUTE);
       return;
     }
@@ -69,10 +69,37 @@ export function SplashView() {
     );
   }, [mutate, router]);
 
+  const logoMark = (
+    <Image
+      alt=""
+      aria-label="ALL GROUND"
+      className="absolute left-[26px] top-[152px] h-[104.001px] w-[246.307px]"
+      draggable={false}
+      height={104}
+      role="img"
+      src="/images/splash/logo.svg"
+      width={247}
+    />
+  );
+  const tagline = (
+    <p className="absolute left-[30px] top-[278px] whitespace-nowrap text-header2 text-white">
+      장애인 생활체육 안심 네트워크 플랫폼
+    </p>
+  );
+  const splashScreen = (
+    <div className="relative mx-auto h-full min-h-[740px] w-full max-w-[360px] overflow-hidden">
+      <h1 className="sr-only">ALL GROUND</h1>
+      {logoMark}
+      {tagline}
+    </div>
+  );
+
   return (
-    <PageContainer className="flex flex-col items-center justify-center gap-6">
-      <h1 className="text-2xl font-semibold text-gray-800">All Ground</h1>
-      <LoadingDots size="lg" />
+    <PageContainer
+      as="main"
+      className="fixed inset-0 z-50 min-h-svh max-w-none overflow-hidden bg-[linear-gradient(-26.746deg,#0ebd7a_5.155%,#e0eba7_140.8%)] !px-0 !py-0"
+    >
+      {splashScreen}
     </PageContainer>
   );
 }
