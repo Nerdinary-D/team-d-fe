@@ -20,7 +20,7 @@ function getSnapshot() {
 }
 
 function getServerSnapshot() {
-  return null;
+  return undefined;
 }
 
 export type AuthGuardProps = {
@@ -37,15 +37,17 @@ export function AuthGuard({ children }: AuthGuardProps) {
   const pathname = usePathname();
   const uuid = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
   const isSplash = pathname === SPLASH_ROUTE;
+  const isHydrating = uuid === undefined;
   const allowed = isSplash || Boolean(uuid);
 
   useEffect(() => {
-    if (allowed) return;
+    if (isHydrating || allowed) return;
     // SSR snapshot 이 stale 일 수 있어 effect 시점에 한 번 더 검증.
     if (pathname === SPLASH_ROUTE || getOwnerUuid()) return;
     router.replace(SPLASH_ROUTE);
-  }, [allowed, pathname, router]);
+  }, [allowed, isHydrating, pathname, router]);
 
+  if (isHydrating && !isSplash) return null;
   if (!allowed) return null;
 
   return <>{children}</>;
