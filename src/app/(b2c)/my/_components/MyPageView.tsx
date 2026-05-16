@@ -1,7 +1,7 @@
 'use client';
 
 import { FacilityCard } from '@/app/(b2c)/_components/FacilityCard';
-import { LocationSelector } from '@/app/(b2c)/_components/LocationSelector';
+import { LocationSelector } from '@/components/common/LocationSelector';
 import { PageContainer } from '@/components/common/PageContainer';
 import { cn } from '@/lib/utils';
 import { useState } from 'react';

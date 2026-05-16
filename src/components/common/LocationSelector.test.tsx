@@ -98,6 +98,20 @@ describe('LocationSelector', () => {
     expect(optionGrid).not.toHaveClass('w-[329px]');
   });
 
+  it('지역을 새로 선택하면 onLocationChange를 호출한다', async () => {
+    const user = userEvent.setup();
+    const onLocationChange = vi.fn();
+    render(
+      <LocationSelector location="서울" onLocationChange={onLocationChange} />,
+    );
+
+    await user.click(screen.getByRole('button', { name: '지역 선택: 서울' }));
+    await user.click(screen.getByRole('button', { name: '대전' }));
+
+    expect(onLocationChange).toHaveBeenCalledTimes(1);
+    expect(onLocationChange).toHaveBeenCalledWith('대전');
+  });
+
   it('지역 변경 직후 바텀 시트를 다시 열면 예약된 토스트를 취소한다', async () => {
     vi.useFakeTimers();
     showToastPopup.mockClear();
