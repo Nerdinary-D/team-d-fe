@@ -4,13 +4,8 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 import { api } from '@/lib/axios';
-import {
-  addMockPartnerPost,
-  generateMockPostId,
-  getMockPartnerPosts,
-} from './_mock';
 import type { CreatePartnerPostInput, PartnerPost, Spot } from './_schema';
-import { CATEGORY_LABEL, CURATION_LABEL } from './_facility-map';
+import { CATEGORY_LABEL, CURATION_LABEL } from '@/api/facility-map';
 
 // ──────────────────────────────────────────────
 // Types
@@ -37,21 +32,49 @@ type Facility = {
   address: FacilityAddress;
 };
 
-type LikeStatus = {
-  uuid: string;
-  isLiked: boolean;
+type MatePostResponse = {
+  facilityId: number;
+  title: string;
+  meetingTime: string;
+  content: string;
+  openchatLink: string;
+  createdAt: string;
 };
+
+type MatePagedResponse = {
+  content: MatePostResponse[];
+  currentPage: number;
+  size: number;
+  totalElements: number;
+  totalPages: number;
+  isFirst: boolean;
+  isLast: boolean;
+};
+
+type CreateMateResponse = {
+  uuid: string;
+  mateId: number;
+  createdAt: string;
+};
+
+// likes 관련 query/mutation 은 `@/api/likes` 로 추출되어 있음. 호출부 호환을 위해 재내보냄.
+export { likeStatusQuery, useToggleLike } from '@/api/likes';
 
 // ──────────────────────────────────────────────
 // HTTP calls
 // ──────────────────────────────────────────────
 
-// TODO: 라우트 동적화 시 spotId 사용. 일단 facility id 1 로 하드코딩.
-const HARDCODED_FACILITY_ID = 1;
-
 async function fetchFacility(facilityId: number): Promise<Facility> {
   const { data } = await api.get<Facility>(`/api/v1/facilities/${facilityId}`);
   return data;
+}
+
+function parseFacilityId(spotId: string): number {
+  const facilityId = Number(spotId);
+  if (!Number.isInteger(facilityId) || facilityId <= 0) {
+    throw new Error('유효하지 않은 시설 ID입니다.');
+  }
+  return facilityId;
 }
 
 function facilityToSpot(facility: Facility): Spot {
@@ -80,59 +103,59 @@ function facilityToSpot(facility: Facility): Spot {
 }
 
 async function fetchSpot(spotId: string): Promise<Spot> {
-  void spotId;
-  const facility = await fetchFacility(HARDCODED_FACILITY_ID);
+  const facility = await fetchFacility(parseFacilityId(spotId));
   return facilityToSpot(facility);
 }
 
-// FIXME: 파트너 모집글 API 가 붙기 전까지 MOCK 유지
-function mockDelay() {
-  return new Promise<void>((resolve) => setTimeout(resolve, 200));
+function matePostToPartnerPost(post: MatePostResponse): PartnerPost {
+  return {
+    // GET 응답에 per-post id 가 없어 facilityId+createdAt 합성 키 사용
+    id: `${post.facilityId}-${post.createdAt}`,
+    spotId: String(post.facilityId),
+    title: post.title,
+    content: post.content,
+    schedule: post.meetingTime,
+    openChatUrl: post.openchatLink,
+    createdAt: post.createdAt,
+  };
 }
 
 async function fetchPartnerPosts(spotId: string): Promise<PartnerPost[]> {
-  await mockDelay();
-  return getMockPartnerPosts(spotId);
-}
-
-async function fetchLikeStatus(
-  uuid: string,
-  facilityId: number,
-): Promise<LikeStatus> {
-  const { data } = await api.get<LikeStatus>('/api/v1/likes', {
-    params: { uuid, facilityId },
+  const facilityId = parseFacilityId(spotId);
+  const { data } = await api.get<MatePagedResponse>('/api/v1/mates', {
+    params: {
+      facilityId,
+      page: 0,
+      size: 10,
+      sort: 'createdAt,DESC',
+    },
   });
-  return data;
-}
-
-async function postLike(facilityId: number): Promise<string> {
-  // uuid 는 axios 인터셉터가 body 에 자동 주입.
-  const { data } = await api.post<string>('/api/v1/likes', { facilityId });
-  return data;
-}
-
-async function deleteLike(uuid: string, facilityId: number): Promise<string> {
-  const { data } = await api.delete<string>('/api/v1/likes', {
-    params: { uuid, facilityId },
-  });
-  return data;
+  return data.content.map(matePostToPartnerPost);
 }
 
 async function postPartnerPost(
   input: CreatePartnerPostInput,
 ): Promise<PartnerPost> {
-  await mockDelay();
-  const created: PartnerPost = {
-    id: generateMockPostId(),
+  const facilityId = parseFacilityId(input.spotId);
+
+  // uuid 는 axios 인터셉터가 body 에 자동 주입.
+  const { data } = await api.post<CreateMateResponse>('/api/v1/mates', {
+    facilityId,
+    title: input.title,
+    meetingTime: input.schedule,
+    content: input.content,
+    openchatLink: input.openChatUrl,
+  });
+
+  return {
+    id: String(data.mateId),
     spotId: input.spotId,
     title: input.title,
     content: input.content,
     schedule: input.schedule,
     openChatUrl: input.openChatUrl,
-    createdAt: new Date().toISOString(),
+    createdAt: data.createdAt,
   };
-  addMockPartnerPost(created);
-  return created;
 }
 
 // ──────────────────────────────────────────────
@@ -153,13 +176,6 @@ export const partnerPostsQuery = (spotId: string) =>
     enabled: Boolean(spotId),
   });
 
-export const likeStatusQuery = (uuid: string, facilityId: number) =>
-  queryOptions({
-    queryKey: ['likes', facilityId, uuid] as const,
-    queryFn: () => fetchLikeStatus(uuid, facilityId),
-    enabled: Boolean(uuid) && facilityId > 0,
-  });
-
 // ──────────────────────────────────────────────
 // Mutation hooks
 // ──────────────────────────────────────────────
@@ -172,25 +188,6 @@ export function useCreatePartnerPost() {
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({
         queryKey: partnerPostsQuery(variables.spotId).queryKey,
-      });
-    },
-  });
-}
-
-/**
- * 좋아요 토글.
- * `mutate(isCurrentlyLiked)` 형태로 현재 좋아요 상태를 넘기면 반대 액션을 수행한다.
- * uuid 가 비어있거나 facilityId 가 유효하지 않으면 호출부에서 미리 차단해야 한다.
- */
-export function useToggleLike(uuid: string, facilityId: number) {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (isCurrentlyLiked: boolean) =>
-      isCurrentlyLiked ? deleteLike(uuid, facilityId) : postLike(facilityId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: likeStatusQuery(uuid, facilityId).queryKey,
       });
     },
   });

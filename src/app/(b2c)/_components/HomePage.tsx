@@ -3,21 +3,16 @@
 import { useQuery } from '@tanstack/react-query';
 import Image from 'next/image';
 import { useState } from 'react';
+import { useToggleLike } from '@/api/likes';
+import { EmptyState } from '@/components/common/EmptyState';
 import { LocationSelector } from '@/components/common/LocationSelector';
+import { SkeletonText } from '@/components/common/Skeleton';
 import { getOwnerUuid } from '@/lib/uuid';
-import { memberQuery } from '../_fetch';
+import { memberQuery, recommendedFacilitiesQuery } from '../_fetch';
 import { FacilityCard } from './FacilityCard';
-import type { FacilityBadgeVariant } from './FacilityBadge';
+import type { FacilityRegion, RecommendedFacility } from '../_fetch';
 
-type HomeFacility = {
-  id: string;
-  name: string;
-  sportName: string;
-  imageSrc: string;
-  imageAlt: string;
-  badges: FacilityBadgeVariant[];
-  isFavorite: boolean;
-};
+type HomeFacility = RecommendedFacility;
 
 const defaultFacilities = [
   {
@@ -49,6 +44,61 @@ const defaultFacilities = [
   },
 ] satisfies HomeFacility[];
 
+const LOCATION_REGION: Record<string, FacilityRegion> = {
+  서울: 'SEOUL',
+  경기: 'GYEONGGI',
+  인천: 'INCHEON',
+  부산: 'BUSAN',
+  대구: 'DAEGU',
+  대전: 'DAEJEON',
+  광주: 'GWANGJU',
+  울산: 'ULSAN',
+  세종: 'SEJONG',
+  강원: 'GANGWON',
+};
+
+type HomeFacilityCardProps = {
+  facility: HomeFacility;
+  uuid: string;
+  favoriteOverride?: boolean;
+  onFavoriteChange: (facilityId: string, nextFavorite: boolean) => void;
+};
+
+function HomeFacilityCard({
+  facility,
+  uuid,
+  favoriteOverride,
+  onFavoriteChange,
+}: HomeFacilityCardProps) {
+  const facilityId = Number(facility.id) || 0;
+  const toggleLike = useToggleLike(uuid, facilityId);
+  const isFavorite = favoriteOverride ?? facility.isFavorite;
+
+  const handleFavoriteChange = (nextFavorite: boolean) => {
+    if (!uuid || facilityId <= 0 || toggleLike.isPending) {
+      onFavoriteChange(facility.id, nextFavorite);
+      return;
+    }
+
+    onFavoriteChange(facility.id, nextFavorite);
+    toggleLike.mutate(isFavorite, {
+      onError: () => onFavoriteChange(facility.id, isFavorite),
+    });
+  };
+
+  return (
+    <FacilityCard
+      name={facility.name}
+      sportName={facility.sportName}
+      imageSrc={facility.imageSrc}
+      imageAlt={facility.imageAlt}
+      badges={facility.badges}
+      isFavorite={isFavorite}
+      onFavoriteChange={handleFavoriteChange}
+    />
+  );
+}
+
 export type HomePageProps = {
   location?: string;
   facilities?: HomeFacility[];
@@ -56,26 +106,39 @@ export type HomePageProps = {
 
 export function HomePage({
   location = '서울',
-  facilities = defaultFacilities,
+  facilities,
 }: HomePageProps) {
-  const ownerUuid = typeof window === 'undefined' ? null : getOwnerUuid();
-  const { data: member } = useQuery(memberQuery(ownerUuid));
+  const [uuid] = useState(() => getOwnerUuid() ?? '');
+  const { data: member } = useQuery(memberQuery(uuid || null));
   const nickname = member?.nickname ?? '00';
 
-  const [facilityItemsState, setFacilityItemsState] = useState<HomeFacility[]>(
-    () => facilities.map((facility) => ({ ...facility })),
+  const [selectedLocation, setSelectedLocation] = useState(location);
+  const selectedRegion = LOCATION_REGION[selectedLocation];
+  const recommendedFacilities = useQuery(
+    recommendedFacilitiesQuery(uuid, {
+      page: 0,
+      size: 10,
+      region: selectedRegion,
+    }),
   );
+  const [favoriteByFacilityId, setFavoriteByFacilityId] = useState<
+    Record<string, boolean>
+  >({});
+
+  const isUsingPropFacilities = facilities !== undefined;
+  const sourceFacilities =
+    facilities ??
+    recommendedFacilities.data?.content ??
+    (uuid ? [] : defaultFacilities);
+
   const updateFacilityFavorite = (
     facilityId: string,
     nextFavorite: boolean,
   ) => {
-    setFacilityItemsState((currentFacilities) =>
-      currentFacilities.map((facility) =>
-        facility.id === facilityId
-          ? { ...facility, isFavorite: nextFavorite }
-          : facility,
-      ),
-    );
+    setFavoriteByFacilityId((currentFavorites) => ({
+      ...currentFavorites,
+      [facilityId]: nextFavorite,
+    }));
   };
 
   const header = (
@@ -96,7 +159,10 @@ export function HomePage({
         </p>
       </div>
       <div className="flex h-6">
-        <LocationSelector location={location} />
+        <LocationSelector
+          location={selectedLocation}
+          onLocationChange={setSelectedLocation}
+        />
       </div>
       <div
         aria-hidden
@@ -105,20 +171,43 @@ export function HomePage({
     </header>
   );
 
-  const facilityItems = facilityItemsState.map((facility) => (
-    <FacilityCard
-      key={facility.id}
-      name={facility.name}
-      sportName={facility.sportName}
-      imageSrc={facility.imageSrc}
-      imageAlt={facility.imageAlt}
-      badges={facility.badges}
-      isFavorite={facility.isFavorite}
-      onFavoriteChange={(nextFavorite) =>
-        updateFacilityFavorite(facility.id, nextFavorite)
-      }
-    />
-  ));
+  const facilityItems = (() => {
+    if (!isUsingPropFacilities && recommendedFacilities.isLoading) {
+      return (
+        <div className="pt-2">
+          <SkeletonText lines={6} />
+        </div>
+      );
+    }
+
+    if (!isUsingPropFacilities && recommendedFacilities.isError) {
+      return (
+        <EmptyState
+          title="추천 시설을 불러오지 못했어요"
+          description="잠시 후 다시 시도해주세요."
+        />
+      );
+    }
+
+    if (sourceFacilities.length === 0) {
+      return (
+        <EmptyState
+          title="추천 시설이 아직 없어요"
+          description="큐레이션 조건에 맞는 시설이 등록되면 여기에 표시됩니다."
+        />
+      );
+    }
+
+    return sourceFacilities.map((facility) => (
+      <HomeFacilityCard
+        key={facility.id}
+        facility={facility}
+        uuid={uuid}
+        favoriteOverride={favoriteByFacilityId[facility.id]}
+        onFavoriteChange={updateFacilityFavorite}
+      />
+    ));
+  })();
 
   const facilityList = (
     <section

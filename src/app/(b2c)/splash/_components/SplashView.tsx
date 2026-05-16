@@ -7,34 +7,24 @@ import { toast } from 'sonner';
 import { PageContainer } from '@/components/common/PageContainer';
 import { ONBOARDING_STORAGE_KEY } from '@/app/onboarding/_components/OnboardingFunnel/OnboardingFunnel.constants';
 import type { OnboardingFormState } from '@/app/onboarding/_components/OnboardingFunnel/OnboardingFunnel.types';
+import { mapRequirementsToCurations } from '@/api/customer-preferences';
 import { getClientUuid } from '@/lib/uuid';
-import { mapRequirementsToCurations } from '../_curation-map';
 import { useLoginCustomer } from '../_fetch';
 
 const NEXT_ROUTE = '/';
 const ONBOARDING_ROUTE = '/onboarding';
+const SPLASH_DISPLAY_MS = 2000;
 
-type OnboardingSignupPayload = {
-  nickname: string;
-  requirements: string[];
-};
-
-function readOnboardingPayload(): OnboardingSignupPayload | null {
+function readOnboardingRequirements(): string[] | null {
   if (typeof window === 'undefined') return null;
   try {
     const raw = window.localStorage.getItem(ONBOARDING_STORAGE_KEY);
     if (!raw) return null;
     const parsed = JSON.parse(raw) as Partial<OnboardingFormState>;
     if (!Array.isArray(parsed?.requirements)) return null;
-    if (typeof parsed.nickname !== 'string' || parsed.nickname.length === 0) {
-      return null;
-    }
-    return {
-      nickname: parsed.nickname,
-      requirements: parsed.requirements.filter(
-        (id): id is string => typeof id === 'string',
-      ),
-    };
+    return parsed.requirements.filter(
+      (id): id is string => typeof id === 'string',
+    );
   } catch {
     return null;
   }
@@ -49,35 +39,39 @@ export function SplashView() {
     if (triggeredRef.current) return;
     triggeredRef.current = true;
 
-    // 이미 가입된 사용자 — 서버에 재요청 없이 바로 홈으로
-    if (getClientUuid()) {
-      router.replace(NEXT_ROUTE);
-      return;
-    }
+    const splashTimer = window.setTimeout(() => {
+      // 이미 가입된 사용자 — 서버에 재요청 없이 홈으로
+      if (getClientUuid()) {
+        router.replace(NEXT_ROUTE);
+        return;
+      }
 
-    const payload = readOnboardingPayload();
-    if (payload === null) {
-      router.replace(ONBOARDING_ROUTE);
-      return;
-    }
+      const requirements = readOnboardingRequirements();
+      if (requirements === null) {
+        router.replace(ONBOARDING_ROUTE);
+        return;
+      }
 
-    const curations = mapRequirementsToCurations(payload.requirements);
+      const curations = mapRequirementsToCurations(requirements);
 
-    mutate(
-      { nickname: payload.nickname, curations },
-      {
-        onSuccess: () => {
-          window.location.assign(NEXT_ROUTE);
+      mutate(
+        { curations },
+        {
+          onSuccess: () => {
+            router.replace(NEXT_ROUTE);
+          },
+          onError: (error) => {
+            toast.error(
+              error instanceof Error
+                ? error.message
+                : '시작 중 문제가 발생했어요. 잠시 후 다시 시도해주세요.',
+            );
+          },
         },
-        onError: (error) => {
-          toast.error(
-            error instanceof Error
-              ? error.message
-              : '시작 중 문제가 발생했어요. 잠시 후 다시 시도해주세요.',
-          );
-        },
-      },
-    );
+      );
+    }, SPLASH_DISPLAY_MS);
+
+    return () => window.clearTimeout(splashTimer);
   }, [mutate, router]);
 
   const logoMark = (
