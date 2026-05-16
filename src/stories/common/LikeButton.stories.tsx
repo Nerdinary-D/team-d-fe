@@ -32,10 +32,7 @@ export const Liked: Story = {
 function ToggleExample() {
   const [isLiked, setIsLiked] = useState(false);
   return (
-    <LikeButton
-      isLiked={isLiked}
-      onToggleLike={() => setIsLiked((v) => !v)}
-    />
+    <LikeButton isLiked={isLiked} onToggleLike={() => setIsLiked((v) => !v)} />
   );
 }
 

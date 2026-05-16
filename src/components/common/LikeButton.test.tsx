@@ -32,9 +32,7 @@ describe('LikeButton', () => {
   });
 
   it('className이 버튼에 적용된다', () => {
-    render(
-      <LikeButton isLiked={false} className="absolute top-2 right-2" />,
-    );
+    render(<LikeButton isLiked={false} className="absolute top-2 right-2" />);
     const button = screen.getByRole('button', { name: '찜하기' });
     expect(button).toHaveClass('absolute', 'top-2', 'right-2');
   });

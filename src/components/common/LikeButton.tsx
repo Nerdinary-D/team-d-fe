@@ -22,7 +22,9 @@ export function LikeButton({
       className={className}
     >
       <Image
-        src={isLiked ? '/icons/heart-select.svg' : '/icons/heart-none-select.svg'}
+        src={
+          isLiked ? '/icons/heart-select.svg' : '/icons/heart-none-select.svg'
+        }
         alt=""
         width={24}
         height={24}
