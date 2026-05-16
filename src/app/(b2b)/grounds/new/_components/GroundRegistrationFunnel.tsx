@@ -11,11 +11,7 @@ import {
 import type { OnCompleteParams } from '@actbase/react-daum-postcode/lib/types';
 import { Camera, ChevronDown } from 'lucide-react';
 import { BottomCTA } from '@/components/common/BottomCTA';
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-} from '@/components/common/Dialog';
+import { Dialog, DialogContent, DialogTitle } from '@/components/common/Dialog';
 import { Textfield } from '@/components/common/Textfield';
 import { cn } from '@/lib/utils';
 
@@ -56,9 +52,7 @@ const KAKAO_POSTCODE_SCRIPT_SRC =
   'https://t1.kakaocdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';
 const KAKAO_POSTCODE_ORIGIN = 'https://postcode.map.kakao.com';
 
-type KakaoPostcodeConstructor = new (
-  options: Record<string, unknown>,
-) => {
+type KakaoPostcodeConstructor = new (options: Record<string, unknown>) => {
   embed: (
     element: HTMLElement,
     options?: { autoClose?: boolean; q?: string },
@@ -80,7 +74,11 @@ const environmentSteps: EnvironmentGroup[][] = [
       icon: '🧠',
       title: '지체장애를 위한 환경이에요.',
       items: [
-        { id: 'step-free-entry', label: '단차없는 휠체어 진입', selected: true },
+        {
+          id: 'step-free-entry',
+          label: '단차없는 휠체어 진입',
+          selected: true,
+        },
         {
           id: 'equipment-rental',
           label: '스포츠 휠체어 및 맞춤 장비대여',
@@ -204,8 +202,7 @@ function createLocalPostcodeFrameUrl() {
     origin: window.location.origin,
     inc: '',
     inch: '80',
-    inct:
-      '구 도메인 리소스 삭제 안내 (5/12 15시): 개발자분들께서는 공지사항을 참고하여 사전에 도메인 전환 조치를 완료해 주시기 바랍니다.',
+    inct: '구 도메인 리소스 삭제 안내 (5/12 15시): 개발자분들께서는 공지사항을 참고하여 사전에 도메인 전환 조치를 완료해 주시기 바랍니다.',
     incf: '15',
     indaum: 'off',
     banner: 'on',
@@ -600,18 +597,23 @@ function AddressSearchField({
   onSelected,
 }: {
   value: string;
-  onSelected: (partialState: Pick<BasicFormState, 'address' | 'region'>) => void;
+  onSelected: (
+    partialState: Pick<BasicFormState, 'address' | 'region'>,
+  ) => void;
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const useLocalHttpFrame = isOpen && isLocalHttpPostcodeContext();
 
-  const handleSelected = useCallback((data: OnCompleteParams) => {
-    const address = data.address || data.roadAddress || data.jibunAddress;
-    const region = getRegionFromPostcodeData(data);
+  const handleSelected = useCallback(
+    (data: OnCompleteParams) => {
+      const address = data.address || data.roadAddress || data.jibunAddress;
+      const region = getRegionFromPostcodeData(data);
 
-    onSelected({ address, region });
-    setIsOpen(false);
-  }, [onSelected]);
+      onSelected({ address, region });
+      setIsOpen(false);
+    },
+    [onSelected],
+  );
 
   const addressInput = (
     <Textfield
