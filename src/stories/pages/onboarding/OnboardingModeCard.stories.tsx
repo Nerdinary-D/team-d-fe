@@ -51,11 +51,13 @@ export const Variants: Story = {
       />
     );
 
-    return (
+    const variantsLayout = (
       <div className="flex w-[328px] flex-col gap-6">
         {defaultCard}
         {selectedCard}
       </div>
     );
+
+    return variantsLayout;
   },
 };

@@ -7,10 +7,15 @@ export function OnboardingHeading({
   id: string;
   topLine: string;
 }) {
-  return (
+  const topLineElement = <span className="block">{topLine}</span>;
+  const bottomLineElement = <span className="block">{bottomLine}</span>;
+
+  const heading = (
     <h1 id={id} className="text-header2 text-black">
-      <span className="block">{topLine}</span>
-      <span className="block">{bottomLine}</span>
+      {topLineElement}
+      {bottomLineElement}
     </h1>
   );
+
+  return heading;
 }

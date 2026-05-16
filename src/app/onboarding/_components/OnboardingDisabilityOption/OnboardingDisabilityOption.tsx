@@ -1,5 +1,6 @@
 import { cn } from '@/lib/utils';
 import type { ComponentPropsWithoutRef } from 'react';
+import type { OnboardingDisabilityRequirement } from '../OnboardingFunnel/OnboardingFunnel.types';
 
 export type OnboardingDisabilityOptionProps = Omit<
   ComponentPropsWithoutRef<'button'>,
@@ -15,14 +16,8 @@ export type OnboardingDisabilityOptionProps = Omit<
   selected?: boolean;
 };
 
-export type OnboardingDisabilityRequirement = {
-  id: string;
-  label: string;
-  checked?: boolean;
-};
-
 function CheckboxIcon({ checked = false }: { checked?: boolean }) {
-  return (
+  const checkboxIcon = (
     <svg
       viewBox="0 0 16 16"
       aria-hidden
@@ -37,6 +32,8 @@ function CheckboxIcon({ checked = false }: { checked?: boolean }) {
       />
     </svg>
   );
+
+  return checkboxIcon;
 }
 
 export function OnboardingDisabilityOption({
@@ -153,7 +150,7 @@ export function OnboardingDisabilityOption({
   );
 
   if (hasRequirements) {
-    return (
+    const selectedOption = (
       <div
         role="group"
         aria-label={`${label} 체크리스트`}
@@ -165,9 +162,11 @@ export function OnboardingDisabilityOption({
         {requirementsList}
       </div>
     );
+
+    return selectedOption;
   }
 
-  return (
+  const optionButton = (
     <button
       type={type}
       aria-pressed={selected}
@@ -180,6 +179,8 @@ export function OnboardingDisabilityOption({
       {header}
     </button>
   );
+
+  return optionButton;
 }
 
 export type OnboardingDisabilityOptionListProps =
@@ -189,11 +190,13 @@ export function OnboardingDisabilityOptionList({
   className,
   ...props
 }: OnboardingDisabilityOptionListProps) {
-  return (
+  const optionList = (
     <div
       data-node-id="5324:102"
       className={cn('flex w-full max-w-[328px] flex-col gap-2.5', className)}
       {...props}
     />
   );
+
+  return optionList;
 }

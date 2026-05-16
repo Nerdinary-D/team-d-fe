@@ -1,7 +1,11 @@
-import type { OnboardingDisabilityRequirement } from '../OnboardingDisabilityOption';
-
 export type OnboardingMode = 'owner' | 'user';
 export type OnboardingStep = 'mode' | 'disability' | 'profile';
+
+export type OnboardingDisabilityRequirement = {
+  id: string;
+  label: string;
+  checked?: boolean;
+};
 
 export type DisabilityOption = {
   id: string;

@@ -4,7 +4,7 @@ import {
   OnboardingDisabilityOption,
   OnboardingDisabilityOptionList,
 } from '@/app/onboarding/_components/OnboardingDisabilityOption';
-import type { OnboardingDisabilityRequirement } from '@/app/onboarding/_components/OnboardingDisabilityOption';
+import type { OnboardingDisabilityRequirement } from '@/app/onboarding/_components/OnboardingFunnel/OnboardingFunnel.types';
 
 const selectedRequirements: OnboardingDisabilityRequirement[] = [
   { id: 'step-free-entry', label: '단차없는 휠체어 진입', checked: true },
@@ -96,11 +96,13 @@ function ListExample() {
     />
   ));
 
-  return (
+  const optionList = (
     <OnboardingDisabilityOptionList>
       {optionItems}
     </OnboardingDisabilityOptionList>
   );
+
+  return optionList;
 }
 
 const meta = {
@@ -122,13 +124,22 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-  render: () => <DefaultExample />,
+  render: () => {
+    const story = <DefaultExample />;
+    return story;
+  },
 };
 
 export const Selected: Story = {
-  render: () => <SelectedExample />,
+  render: () => {
+    const story = <SelectedExample />;
+    return story;
+  },
 };
 
 export const List: Story = {
-  render: () => <ListExample />,
+  render: () => {
+    const story = <ListExample />;
+    return story;
+  },
 };

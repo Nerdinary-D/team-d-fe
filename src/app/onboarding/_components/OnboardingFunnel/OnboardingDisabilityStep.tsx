@@ -1,9 +1,9 @@
 import {
   OnboardingDisabilityOption,
   OnboardingDisabilityOptionList,
-  type OnboardingDisabilityRequirement,
 } from '../OnboardingDisabilityOption';
 import { DISABILITY_OPTIONS } from './OnboardingFunnel.constants';
+import type { OnboardingDisabilityRequirement } from './OnboardingFunnel.types';
 import { OnboardingHeading } from './OnboardingHeading';
 
 type OnboardingDisabilityStepProps = {

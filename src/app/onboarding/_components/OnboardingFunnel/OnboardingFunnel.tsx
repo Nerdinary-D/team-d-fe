@@ -4,7 +4,6 @@ import { useState } from 'react';
 import type { ChangeEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { BottomCTA } from '@/components/common/BottomCTA';
-import type { OnboardingDisabilityRequirement } from '../OnboardingDisabilityOption';
 import { OnboardingProgress } from '../OnboardingProgress';
 import {
   DISABILITY_OPTIONS,
@@ -12,7 +11,10 @@ import {
   initialFormState,
 } from './OnboardingFunnel.constants';
 import { saveOnboardingForm } from './OnboardingFunnel.storage';
-import type { OnboardingMode } from './OnboardingFunnel.types';
+import type {
+  OnboardingDisabilityRequirement,
+  OnboardingMode,
+} from './OnboardingFunnel.types';
 import { OnboardingDisabilityStep } from './OnboardingDisabilityStep';
 import { OnboardingModeStep } from './OnboardingModeStep';
 import { OnboardingProfileStep } from './OnboardingProfileStep';

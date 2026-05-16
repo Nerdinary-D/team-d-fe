@@ -5,5 +5,4 @@ export {
 export type {
   OnboardingDisabilityOptionListProps,
   OnboardingDisabilityOptionProps,
-  OnboardingDisabilityRequirement,
 } from './OnboardingDisabilityOption';
