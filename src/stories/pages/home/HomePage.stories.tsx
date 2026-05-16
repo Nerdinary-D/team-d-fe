@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { HomePage } from '@/app/(b2c)/_components/HomePage';
-import { AppToastViewport } from '@/components/common/Toast';
+import { Toaster } from '@/components/common/Toast';
 import { BottomTab } from '@/components/common/bottomTab/BottomTab';
 
 const meta = {
@@ -14,7 +14,7 @@ const meta = {
       <div className="min-h-[740px] bg-white">
         <Story />
         <BottomTab activePathname="/" />
-        <AppToastViewport />
+        <Toaster />
       </div>
     ),
   ],
