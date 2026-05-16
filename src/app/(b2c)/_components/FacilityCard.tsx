@@ -122,7 +122,10 @@ export function FacilityCard({
   return (
     <article
       data-slot="facility-card"
-      className={cn('flex w-[328px] flex-col rounded-[10px]', className)}
+      className={cn(
+        'flex w-full max-w-[328px] flex-col rounded-[10px]',
+        className,
+      )}
       {...props}
     >
       {image}

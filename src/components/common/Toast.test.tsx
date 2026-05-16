@@ -15,10 +15,18 @@ describe('ToastPopup', () => {
     expect(toast).toHaveTextContent('텍스트');
     expect(toast).toHaveClass(
       'min-h-[60px]',
-      'w-[328px]',
+      'max-w-[328px]',
       'rounded-[10px]',
       'bg-main',
     );
+  });
+
+  it('작은 모바일 화면에서 토스트 폭이 뷰포트 안으로 줄어든다', () => {
+    render(<ToastPopup>텍스트</ToastPopup>);
+
+    const toast = screen.getByRole('status');
+    expect(toast).toHaveClass('w-[calc(100vw-32px)]', 'max-w-[328px]');
+    expect(toast).not.toHaveClass('w-[328px]');
   });
 
   it('기본 체크 아이콘은 장식 요소로 렌더링한다', () => {

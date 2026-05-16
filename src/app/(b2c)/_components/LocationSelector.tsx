@@ -185,7 +185,7 @@ export function LocationSelector({
       className="left-1/2 h-[413px] w-full max-w-[360px] -translate-x-1/2 items-start gap-7 bg-white px-4 py-[23px] pr-[15px]"
     >
       {sheetHeader}
-      <div className="grid w-[329px] grid-cols-2 gap-x-[17px]">
+      <div className="grid w-full grid-cols-2 gap-x-[17px]">
         {locationItems}
       </div>
     </BottomSheetContent>

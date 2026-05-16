@@ -121,7 +121,7 @@ export function ToastPopup({
     <div
       role={role}
       className={cn(
-        'flex min-h-[60px] w-[328px] items-center gap-2.5 rounded-[10px] bg-main px-5 py-[18px]',
+        'flex min-h-[60px] w-[calc(100vw-32px)] max-w-[328px] items-center gap-2.5 rounded-[10px] bg-main px-5 py-[18px]',
         className,
       )}
       {...props}

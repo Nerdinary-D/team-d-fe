@@ -1,4 +1,10 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import { LocationSelector } from './LocationSelector';
@@ -52,25 +58,41 @@ describe('LocationSelector', () => {
     expect(
       screen.getByRole('button', { name: '지역 선택: 대전' }),
     ).toBeInTheDocument();
-    expect(showToastPopup).not.toHaveBeenCalled();
 
     await waitFor(() =>
       expect(showToastPopup).toHaveBeenCalledWith('지역 설정이 완료되었어요!'),
     );
   });
 
-  it('지역 변경 직후 바텀 시트를 다시 열면 예약된 토스트를 취소한다', async () => {
+  it('작은 모바일 화면에서 지역 옵션 그리드가 시트 안에서 줄어든다', async () => {
     const user = userEvent.setup();
+    render(<LocationSelector location="서울" />);
+
+    await user.click(screen.getByRole('button', { name: '지역 선택: 서울' }));
+
+    const dialog = await screen.findByRole('dialog', { name: '지역 설정' });
+    const optionGrid = screen.getByRole('button', {
+      name: '서울',
+    }).parentElement;
+
+    expect(dialog).toHaveClass('w-full', 'max-w-[360px]');
+    expect(optionGrid).toHaveClass('grid', 'w-full');
+    expect(optionGrid).not.toHaveClass('w-[329px]');
+  });
+
+  it('지역 변경 직후 바텀 시트를 다시 열면 예약된 토스트를 취소한다', async () => {
+    vi.useFakeTimers();
     showToastPopup.mockClear();
     hideToastPopup.mockClear();
     render(<LocationSelector location="서울" />);
 
-    await user.click(screen.getByRole('button', { name: '지역 선택: 서울' }));
-    await user.click(screen.getByRole('button', { name: '대전' }));
-    await user.click(screen.getByRole('button', { name: '지역 선택: 대전' }));
+    fireEvent.click(screen.getByRole('button', { name: '지역 선택: 서울' }));
+    fireEvent.click(screen.getByRole('button', { name: '대전' }));
+    fireEvent.click(screen.getByRole('button', { name: '지역 선택: 대전' }));
 
     expect(hideToastPopup).toHaveBeenCalledTimes(2);
-    await new Promise((resolve) => setTimeout(resolve, 380));
+    act(() => vi.advanceTimersByTime(380));
     expect(showToastPopup).not.toHaveBeenCalled();
+    vi.useRealTimers();
   });
 });

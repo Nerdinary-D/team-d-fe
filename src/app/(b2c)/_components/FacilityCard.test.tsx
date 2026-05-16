@@ -40,6 +40,26 @@ describe('FacilityCard', () => {
     );
   });
 
+  it('작은 모바일 화면에서 잘리지 않도록 카드 폭을 유동적으로 제한한다', () => {
+    render(
+      <FacilityCard
+        name="시설 명"
+        sportName="종목명"
+        imageSrc="/facility.png"
+        imageAlt="시설 이미지"
+        badges={defaultBadges}
+        isFavorite={false}
+      />,
+    );
+
+    const card = screen
+      .getByRole('heading', { name: '시설 명' })
+      .closest('[data-slot="facility-card"]');
+
+    expect(card).toHaveClass('w-full', 'max-w-[328px]');
+    expect(card).not.toHaveClass('w-[328px]');
+  });
+
   it('뱃지가 4개 이하이면 더보기 버튼을 렌더링하지 않는다', () => {
     render(
       <FacilityCard
