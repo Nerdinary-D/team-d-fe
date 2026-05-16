@@ -103,10 +103,7 @@ export function SpotMap({
   const clientId = process.env.NEXT_PUBLIC_NAVER_MAP_CLIENT_ID;
 
   useEffect(() => {
-    if (!clientId) {
-      setError("NEXT_PUBLIC_NAVER_MAP_CLIENT_ID 가 설정되지 않았습니다.");
-      return;
-    }
+    if (!clientId) return;
 
     let cancelled = false;
 
@@ -128,17 +125,21 @@ export function SpotMap({
     };
   }, [clientId, latitude, longitude, zoom]);
 
-  if (error) {
+  const fallbackClassName = cn(
+    "flex h-72 items-center justify-center rounded-md border border-dashed px-4 text-center text-sm text-muted-foreground",
+    className,
+  );
+
+  if (!clientId) {
     return (
-      <div
-        className={cn(
-          "flex h-72 items-center justify-center rounded-md border border-dashed px-4 text-center text-sm text-muted-foreground",
-          className,
-        )}
-      >
-        {error}
+      <div className={fallbackClassName}>
+        NEXT_PUBLIC_NAVER_MAP_CLIENT_ID 가 설정되지 않았습니다.
       </div>
     );
+  }
+
+  if (error) {
+    return <div className={fallbackClassName}>{error}</div>;
   }
 
   return (
