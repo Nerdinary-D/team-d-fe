@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import { Button } from "@/components/common/Button";
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
+import { Button } from '@/components/common/Button';
 import {
   Card,
   CardAction,
@@ -8,10 +8,10 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/common/Card";
+} from '@/components/common/Card';
 
 const meta = {
-  title: "Common/Card",
+  title: 'Common/Card',
   component: Card,
 } satisfies Meta<typeof Card>;
 

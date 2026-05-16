@@ -1,9 +1,9 @@
-import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import { MatchCard } from "@/app/(b2c)/matches/_components/MatchCard";
-import { finishedMatch, liveMatch, scheduledMatch } from "./fixtures";
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
+import { MatchCard } from '@/app/(b2c)/matches/_components/MatchCard';
+import { finishedMatch, liveMatch, scheduledMatch } from './fixtures';
 
 const meta = {
-  title: "Pages/Matches/MatchCard",
+  title: 'Pages/Matches/MatchCard',
   component: MatchCard,
   args: {
     match: scheduledMatch,

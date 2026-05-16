@@ -3,20 +3,20 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "@/components/common/Card";
-import { cn } from "@/lib/utils";
-import type { Match, MatchStatus } from "../_fetch";
+} from '@/components/common/Card';
+import { cn } from '@/lib/utils';
+import type { Match, MatchStatus } from '../_fetch';
 
 const statusLabel: Record<MatchStatus, string> = {
-  scheduled: "예정",
-  live: "LIVE",
-  finished: "종료",
+  scheduled: '예정',
+  live: 'LIVE',
+  finished: '종료',
 };
 
 const statusClass: Record<MatchStatus, string> = {
-  scheduled: "text-muted-foreground",
-  live: "text-red-500",
-  finished: "text-muted-foreground line-through",
+  scheduled: 'text-muted-foreground',
+  live: 'text-red-500',
+  finished: 'text-muted-foreground line-through',
 };
 
 export type MatchCardProps = {
@@ -25,7 +25,7 @@ export type MatchCardProps = {
 
 export function MatchCard({ match }: MatchCardProps) {
   const status = (
-    <span className={cn("text-xs font-medium", statusClass[match.status])}>
+    <span className={cn('text-xs font-medium', statusClass[match.status])}>
       {statusLabel[match.status]}
     </span>
   );
@@ -40,7 +40,7 @@ export function MatchCard({ match }: MatchCardProps) {
 
   const schedule = (
     <p className="text-xs text-muted-foreground">
-      {new Date(match.scheduledAt).toLocaleString("ko-KR")}
+      {new Date(match.scheduledAt).toLocaleString('ko-KR')}
     </p>
   );
 

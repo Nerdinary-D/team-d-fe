@@ -1,11 +1,11 @@
-import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import { EmptyState } from "@/components/common/EmptyState";
-import { PageContainer } from "@/components/common/PageContainer";
-import { MatchCard } from "@/app/(b2c)/matches/_components/MatchCard";
-import { matchList } from "./fixtures";
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
+import { EmptyState } from '@/components/common/EmptyState';
+import { PageContainer } from '@/components/common/PageContainer';
+import { MatchCard } from '@/app/(b2c)/matches/_components/MatchCard';
+import { matchList } from './fixtures';
 
 const meta = {
-  title: "Pages/Matches/MatchListScenario",
+  title: 'Pages/Matches/MatchListScenario',
 } satisfies Meta;
 
 export default meta;

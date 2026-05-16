@@ -7,7 +7,7 @@ export default function B2CLayout({
 }) {
   return (
     <div className="flex min-h-svh flex-col">
-      <div className="flex-1 pb-16">{children}</div>
+      <div className="flex-1 pb-[90px]">{children}</div>
       {tab}
     </div>
   );

@@ -24,6 +24,7 @@
 
 # production
 /build
+/storybook-static
 
 # misc
 .DS_Store
@@ -45,6 +46,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# local worktrees
+.worktrees/
 
 # claude code (개인 설정)
 .claude/

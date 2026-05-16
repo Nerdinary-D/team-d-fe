@@ -1,15 +1,11 @@
-import {
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
-import { api } from "@/lib/axios";
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { api } from '@/lib/axios';
 
 // ──────────────────────────────────────────────
 // Types
 // ──────────────────────────────────────────────
 
-export type MatchStatus = "scheduled" | "live" | "finished";
+export type MatchStatus = 'scheduled' | 'live' | 'finished';
 
 export type Match = {
   id: string;
@@ -19,16 +15,16 @@ export type Match = {
   scheduledAt: string;
 };
 
-export type CreateMatchPayload = Omit<Match, "id" | "status">;
+export type CreateMatchPayload = Omit<Match, 'id' | 'status'>;
 
 // ──────────────────────────────────────────────
 // Query keys
 // ──────────────────────────────────────────────
 
 export const matchKeys = {
-  all: ["matches"] as const,
-  list: () => [...matchKeys.all, "list"] as const,
-  detail: (id: string) => [...matchKeys.all, "detail", id] as const,
+  all: ['matches'] as const,
+  list: () => [...matchKeys.all, 'list'] as const,
+  detail: (id: string) => [...matchKeys.all, 'detail', id] as const,
 };
 
 // ──────────────────────────────────────────────
@@ -36,7 +32,7 @@ export const matchKeys = {
 // ──────────────────────────────────────────────
 
 async function fetchMatches() {
-  const { data } = await api.get<Match[]>("/matches");
+  const { data } = await api.get<Match[]>('/matches');
   return data;
 }
 
@@ -46,7 +42,7 @@ async function fetchMatch(id: string) {
 }
 
 async function createMatch(payload: CreateMatchPayload) {
-  const { data } = await api.post<Match>("/matches", payload);
+  const { data } = await api.post<Match>('/matches', payload);
   return data;
 }
 

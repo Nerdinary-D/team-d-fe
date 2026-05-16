@@ -1,21 +1,37 @@
-import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import { PlusIcon } from "lucide-react";
-import { Button } from "@/components/common/Button";
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
+import { PlusIcon } from 'lucide-react';
+import { Button } from '@/components/common/Button';
 
 const meta = {
-  title: "Common/Button",
+  title: 'Common/Button',
   component: Button,
   args: {
-    children: "Button",
+    children: 'Button',
   },
   argTypes: {
     variant: {
-      control: "select",
-      options: ["default", "outline", "secondary", "ghost", "destructive", "link"],
+      control: 'select',
+      options: [
+        'default',
+        'outline',
+        'secondary',
+        'ghost',
+        'destructive',
+        'link',
+      ],
     },
     size: {
-      control: "select",
-      options: ["default", "xs", "sm", "lg", "icon", "icon-xs", "icon-sm", "icon-lg"],
+      control: 'select',
+      options: [
+        'default',
+        'xs',
+        'sm',
+        'lg',
+        'icon',
+        'icon-xs',
+        'icon-sm',
+        'icon-lg',
+      ],
     },
   },
 } satisfies Meta<typeof Button>;
@@ -28,7 +44,14 @@ export const Default: Story = {};
 
 export const Variants: Story = {
   render: () => {
-    const variants = ["default", "outline", "secondary", "ghost", "destructive", "link"] as const;
+    const variants = [
+      'default',
+      'outline',
+      'secondary',
+      'ghost',
+      'destructive',
+      'link',
+    ] as const;
     const buttons = variants.map((variant) => (
       <Button key={variant} variant={variant}>
         {variant}
@@ -42,7 +65,7 @@ export const Variants: Story = {
 export const Loading: Story = {
   args: {
     loading: true,
-    children: "저장 중",
+    children: '저장 중',
   },
 };
 
