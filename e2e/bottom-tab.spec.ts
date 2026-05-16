@@ -21,8 +21,10 @@ test('하단 탭으로 홈 ↔ 마이 페이지를 오갈 수 있다', async ({ 
   await expect(homeTab).toHaveClass(/text-gray-300/);
 
   await mateTab.click();
-  await expect(page).toHaveURL('/matches');
-  await expect(page.getByRole('heading', { name: '경기 목록' })).toBeVisible();
+  await expect(page).toHaveURL('/mate');
+  await expect(
+    page.getByRole('heading', { name: '지금 모집 중인 그라운드' }),
+  ).toBeVisible();
   await expect(mateTab).toHaveClass(/text-main/);
   await expect(myTab).toHaveClass(/text-gray-300/);
 

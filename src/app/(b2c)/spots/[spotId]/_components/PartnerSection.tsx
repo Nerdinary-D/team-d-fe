@@ -1,6 +1,6 @@
+import { PostCard } from '@/components/common/PostCard';
 import { cn } from '@/lib/utils';
 import type { PartnerPost } from '../_schema';
-import { PartnerPostCard } from './PartnerPostCard';
 
 export type PartnerSectionProps = {
   posts: PartnerPost[];
@@ -20,7 +20,14 @@ export function PartnerSection({ posts, className }: PartnerSectionProps) {
     ) : (
       <div className="flex flex-col gap-[14px]">
         {posts.map((post) => (
-          <PartnerPostCard key={post.id} post={post} />
+          <PostCard
+            key={post.id}
+            title={post.title}
+            createdAt={post.createdAt}
+            schedule={post.schedule}
+            content={post.content}
+            openChatUrl={post.openChatUrl}
+          />
         ))}
       </div>
     );

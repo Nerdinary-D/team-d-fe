@@ -64,20 +64,32 @@ export function SpotDetailView({ spotId }: SpotDetailViewProps) {
     </BottomCTA>
   );
 
+  const header = (
+    <header className="sticky top-0 z-10 flex flex-col gap-[20px] bg-white">
+      <SpotHero imageUrl={s.imageUrl} alt={s.name} />
+      <SpotInfoHeader name={s.name} sport={s.sport} address={s.address} />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-full h-3 bg-gradient-to-b from-white to-transparent"
+      />
+    </header>
+  );
+
   return (
     <>
-      <main className="flex flex-col gap-[20px]">
-        <SpotHero imageUrl={s.imageUrl} alt={s.name} />
-        <SpotInfoHeader name={s.name} sport={s.sport} address={s.address} />
-        <InfraChipList infraList={s.infraList} />
-        <div className="px-4">
-          <SpotMap
-            latitude={s.latitude}
-            longitude={s.longitude}
-            onClick={handleOpenFullMap}
-          />
+      <main className="flex flex-col">
+        {header}
+        <div className="flex flex-col gap-[20px] pt-[20px]">
+          <InfraChipList infraList={s.infraList} />
+          <div className="px-4">
+            <SpotMap
+              latitude={s.latitude}
+              longitude={s.longitude}
+              onClick={handleOpenFullMap}
+            />
+          </div>
+          <PartnerSection posts={postList} />
         </div>
-        <PartnerSection posts={postList} />
       </main>
       {createCta}
       <PartnerPostFormDialog
