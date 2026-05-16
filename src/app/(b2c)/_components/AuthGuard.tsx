@@ -2,13 +2,17 @@
 
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useSyncExternalStore } from 'react';
-import { getOwnerUuid } from '@/lib/uuid';
+import { OWNER_UUID_CHANGE_EVENT, getOwnerUuid } from '@/lib/uuid';
 
 const SPLASH_ROUTE = '/splash';
 
 function subscribe(callback: () => void) {
   window.addEventListener('storage', callback);
-  return () => window.removeEventListener('storage', callback);
+  window.addEventListener(OWNER_UUID_CHANGE_EVENT, callback);
+  return () => {
+    window.removeEventListener('storage', callback);
+    window.removeEventListener(OWNER_UUID_CHANGE_EVENT, callback);
+  };
 }
 
 function getSnapshot() {

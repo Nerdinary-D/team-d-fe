@@ -1,4 +1,5 @@
 const OWNER_UUID_STORAGE_KEY = 'owner-uuid';
+export const OWNER_UUID_CHANGE_EVENT = 'owner-uuid:change';
 
 /**
  * v4 UUID 생성.
@@ -48,11 +49,12 @@ export function getOwnerUuid(): string | null {
   }
 }
 
-/** owner uuid 를 localStorage 에 저장. */
+/** owner uuid 를 localStorage 에 저장. 같은 탭 구독자에게 변경 이벤트도 발행. */
 export function setOwnerUuid(uuid: string): void {
   if (!isBrowser()) return;
   try {
     window.localStorage.setItem(OWNER_UUID_STORAGE_KEY, uuid);
+    window.dispatchEvent(new Event(OWNER_UUID_CHANGE_EVENT));
   } catch {
     // storage quota / private mode 등은 무시
   }
@@ -71,11 +73,12 @@ export function getOrCreateOwnerUuid(): string {
   return fresh;
 }
 
-/** owner uuid 삭제 (로그아웃). */
+/** owner uuid 삭제 (로그아웃). 같은 탭 구독자에게 변경 이벤트도 발행. */
 export function clearOwnerUuid(): void {
   if (!isBrowser()) return;
   try {
     window.localStorage.removeItem(OWNER_UUID_STORAGE_KEY);
+    window.dispatchEvent(new Event(OWNER_UUID_CHANGE_EVENT));
   } catch {
     // ignore
   }
