@@ -274,4 +274,28 @@ describe('OnboardingFunnel', () => {
     });
     expect(replace).toHaveBeenCalledWith('/matches');
   });
+
+  it('저장소 기록이 실패해도 완료 후 매칭 목록으로 이동한다', async () => {
+    window.localStorage.setItem = vi.fn(() => {
+      throw new Error('storage unavailable');
+    });
+
+    const user = userEvent.setup();
+    render(<OnboardingFunnel />);
+
+    await user.click(screen.getByRole('button', { name: '사용자 모드' }));
+    await user.click(screen.getByRole('button', { name: '다음' }));
+    await user.click(screen.getByRole('button', { name: '지체 장애' }));
+    await user.click(
+      screen.getByRole('button', { name: '단차 없는 휠체어 진입' }),
+    );
+    await user.click(screen.getByRole('button', { name: '다음' }));
+    await user.type(
+      screen.getByPlaceholderText('닉네임을 입력하세요.'),
+      '너디너리',
+    );
+    await user.click(screen.getByRole('button', { name: '완료' }));
+
+    expect(replace).toHaveBeenCalledWith('/matches');
+  });
 });
