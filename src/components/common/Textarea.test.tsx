@@ -31,4 +31,23 @@ describe('Textarea', () => {
       screen.queryByText('500자 이내로 작성해주세요'),
     ).not.toBeInTheDocument();
   });
+
+  it('에러 메시지를 aria-describedby로 textarea에 연결한다', () => {
+    render(
+      <Textarea
+        label="모집 내용"
+        error="내용을 입력해주세요"
+        aria-describedby="external-desc"
+      />,
+    );
+
+    const textarea = screen.getByLabelText('모집 내용');
+    const errorMessage = screen.getByText('내용을 입력해주세요');
+
+    expect(errorMessage).toHaveAttribute('id');
+    expect(textarea).toHaveAttribute(
+      'aria-describedby',
+      `external-desc ${errorMessage.id}`,
+    );
+  });
 });

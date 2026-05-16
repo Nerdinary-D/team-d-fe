@@ -13,6 +13,18 @@ describe('OnboardingProgress', () => {
     );
   });
 
+  it('progressbar 역할과 현재 단계 값을 제공한다', () => {
+    render(<OnboardingProgress currentStep={2} totalSteps={4} />);
+
+    const progress = screen.getByRole('progressbar', {
+      name: '2/4 단계',
+    });
+
+    expect(progress).toHaveAttribute('aria-valuemin', '1');
+    expect(progress).toHaveAttribute('aria-valuemax', '4');
+    expect(progress).toHaveAttribute('aria-valuenow', '2');
+  });
+
   it('기본값으로 3개 segment 중 첫 번째만 활성화한다', () => {
     render(<OnboardingProgress />);
 

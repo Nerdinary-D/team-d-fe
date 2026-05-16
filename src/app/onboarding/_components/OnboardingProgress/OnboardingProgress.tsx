@@ -55,9 +55,13 @@ export function OnboardingProgress({
     </p>
   );
 
-  return (
+  const progress = (
     <div
+      role="progressbar"
       aria-label={`${safeCurrentStep}/${segmentCount} 단계`}
+      aria-valuemin={1}
+      aria-valuemax={segmentCount}
+      aria-valuenow={safeCurrentStep}
       className={cn('flex w-full max-w-[328px] flex-col gap-2', className)}
       {...props}
     >
@@ -65,4 +69,6 @@ export function OnboardingProgress({
       <div className="flex justify-end">{stepLabel}</div>
     </div>
   );
+
+  return progress;
 }
