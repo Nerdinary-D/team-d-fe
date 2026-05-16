@@ -2,12 +2,15 @@
 
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { BottomCTA } from '@/components/common/BottomCTA';
+import { cn } from '@/lib/utils';
 import { EmptyState } from '@/components/common/EmptyState';
 import { SkeletonText } from '@/components/common/Skeleton';
 import { partnerPostsQuery, spotQuery } from '../_fetch';
 import { InfraChipList } from './InfraChipList';
+import { PartnerPostFormDialog } from './PartnerPostFormDialog';
 import { PartnerSection } from './PartnerSection';
 import { SpotHero } from './SpotHero';
 import { SpotInfoHeader } from './SpotInfoHeader';
@@ -19,14 +22,12 @@ export type SpotDetailViewProps = {
 
 export function SpotDetailView({ spotId }: SpotDetailViewProps) {
   const router = useRouter();
-
+  const [isCreateOpen, setCreateOpen] = useState(false);
   const spot = useQuery(spotQuery(spotId));
   const posts = useQuery(partnerPostsQuery(spotId));
 
-  const handleBack = () => router.back();
-  const handleOpenCreate = () => {
-    // TODO(phase4): PartnerPostFormDialog 연결
-  };
+  const handleOpenCreate = () => setCreateOpen(true);
+  const handleOpenFullMap = () => router.push(`/spots/${spotId}/map`);
 
   if (spot.isLoading || posts.isLoading) {
     return (
@@ -51,7 +52,13 @@ export function SpotDetailView({ spotId }: SpotDetailViewProps) {
   const postList = posts.data ?? [];
 
   const createCta = (
-    <BottomCTA onClick={handleOpenCreate}>
+    <BottomCTA
+      onClick={handleOpenCreate}
+      className={cn(
+        'transition-opacity duration-200',
+        isCreateOpen && 'pointer-events-none opacity-0',
+      )}
+    >
       <Image src="/icons/plus.svg" alt="" width={24} height={24} aria-hidden />
       <span className="text-subtitle2">모집글 등록하기</span>
     </BottomCTA>
@@ -60,15 +67,24 @@ export function SpotDetailView({ spotId }: SpotDetailViewProps) {
   return (
     <>
       <main className="flex flex-col gap-[20px]">
-        <SpotHero imageUrl={s.imageUrl} alt={s.name} onBack={handleBack} />
+        <SpotHero imageUrl={s.imageUrl} alt={s.name} />
         <SpotInfoHeader name={s.name} sport={s.sport} address={s.address} />
         <InfraChipList infraList={s.infraList} />
         <div className="px-4">
-          <SpotMap latitude={s.latitude} longitude={s.longitude} />
+          <SpotMap
+            latitude={s.latitude}
+            longitude={s.longitude}
+            onClick={handleOpenFullMap}
+          />
         </div>
         <PartnerSection posts={postList} />
       </main>
       {createCta}
+      <PartnerPostFormDialog
+        spotId={spotId}
+        open={isCreateOpen}
+        onOpenChange={setCreateOpen}
+      />
     </>
   );
 }
