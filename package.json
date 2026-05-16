@@ -8,6 +8,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:report": "playwright show-report"
@@ -36,6 +38,9 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.60.0",
+    "@storybook/addon-a11y": "10.4.0",
+    "@storybook/addon-docs": "10.4.0",
+    "@storybook/nextjs-vite": "10.4.0",
     "@tailwindcss/postcss": "^4",
     "@tanstack/react-query-devtools": "^5.100.10",
     "@types/node": "^20",
@@ -43,6 +48,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.2.6",
+    "storybook": "10.4.0",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

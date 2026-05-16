@@ -1,0 +1,20 @@
+@font-face {
+  font-family: "Pretendard";
+  src: url("/fonts/PretendardVariable.woff2") format("woff2");
+  font-display: swap;
+  font-weight: 45 920;
+}
+
+:root {
+  --font-pretendard: "Pretendard";
+  --font-geist-mono: ui-monospace, "SFMono-Regular", "SF Mono", Consolas,
+    "Liberation Mono", Menlo, monospace;
+}
+
+body {
+  min-height: 100vh;
+}
+
+#storybook-root {
+  min-height: 100%;
+}
