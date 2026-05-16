@@ -14,49 +14,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Get PR diff
-        id: diff
-        run: |
-          DIFF=$(gh pr diff ${{ github.event.pull_request.number }} | head -1500)
-          echo "diff<<EOFEOF" >> "$GITHUB_OUTPUT"
-          echo "$DIFF" >> "$GITHUB_OUTPUT"
-          echo "EOFEOF" >> "$GITHUB_OUTPUT"
+      - name: Run AI Review
+        run: bash scripts/ai-pr-review.sh "${{ github.event.pull_request.number }}"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: AI Review
-        id: review
-        run: |
-          PAYLOAD=$(jq -n \
-            --arg content "다음 PR diff를 코드 리뷰해줘. 컨벤션 준수, 버그, 성능, 가독성 관점에서 리뷰해. 한국어로 작성하고 마크다운 형식으로 출력해.
-
-          \`\`\`diff
-          ${{ steps.diff.outputs.diff }}
-          \`\`\`" \
-            '{
-              model: "glm-5.1",
-              max_tokens: 2000,
-              messages: [{
-                role: "user",
-                content: $content
-              }]
-            }')
-
-          RESPONSE=$(curl -s -X POST "${{ vars.ANTHROPIC_BASE_URL }}/v1/messages" \
-            -H "Content-Type: application/json" \
-            -H "x-api-key: ${{ secrets.ANTHROPIC_AUTH_TOKEN }}" \
-            -H "anthropic-version: 2023-06-01" \
-            -d "$PAYLOAD")
-
-          REVIEW=$(echo "$RESPONSE" | jq -r '.content[0].text // "리뷰 생성 실패"')
-          echo "review<<EOFEOF" >> "$GITHUB_OUTPUT"
-          echo "$REVIEW" >> "$GITHUB_OUTPUT"
-          echo "EOFEOF" >> "$GITHUB_OUTPUT"
-
-      - name: Post review comment
-        run: |
-          gh pr comment ${{ github.event.pull_request.number }} --body "## 🤖 AI Code Review
-
-          ${{ steps.review.outputs.review }}"
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ANTHROPIC_AUTH_TOKEN: ${{ secrets.ANTHROPIC_AUTH_TOKEN }}
+          ANTHROPIC_BASE_URL: ${{ vars.ANTHROPIC_BASE_URL }}
+          ANTHROPIC_MODEL: glm-5.1
