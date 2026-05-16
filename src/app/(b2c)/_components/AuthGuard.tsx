@@ -40,10 +40,11 @@ export function AuthGuard({ children }: AuthGuardProps) {
   const allowed = isSplash || Boolean(uuid);
 
   useEffect(() => {
-    if (!allowed) {
-      router.replace(SPLASH_ROUTE);
-    }
-  }, [allowed, router]);
+    if (allowed) return;
+    // SSR snapshot 이 stale 일 수 있어 effect 시점에 한 번 더 검증.
+    if (pathname === SPLASH_ROUTE || getOwnerUuid()) return;
+    router.replace(SPLASH_ROUTE);
+  }, [allowed, pathname, router]);
 
   if (!allowed) return null;
 
