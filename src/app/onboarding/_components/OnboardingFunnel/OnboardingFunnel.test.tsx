@@ -246,7 +246,7 @@ describe('OnboardingFunnel', () => {
     expect(screen.getByRole('button', { name: '완료' })).toBeEnabled();
   });
 
-  it('완료하면 온보딩 입력값을 저장하고 홈으로 이동한다', async () => {
+  it('완료하면 온보딩 입력값을 저장하고 스플래시로 이동한다', async () => {
     const user = userEvent.setup();
     render(<OnboardingFunnel />);
 
@@ -272,10 +272,10 @@ describe('OnboardingFunnel', () => {
       nickname: '너디너리',
       completedAt: expect.any(String),
     });
-    expect(replace).toHaveBeenCalledWith('/');
+    expect(replace).toHaveBeenCalledWith('/splash');
   });
 
-  it('저장소 기록이 실패해도 완료 후 홈으로 이동한다', async () => {
+  it('저장소 기록이 실패해도 완료 후 스플래시로 이동한다', async () => {
     window.localStorage.setItem = vi.fn(() => {
       throw new Error('storage unavailable');
     });
@@ -296,6 +296,6 @@ describe('OnboardingFunnel', () => {
     );
     await user.click(screen.getByRole('button', { name: '완료' }));
 
-    expect(replace).toHaveBeenCalledWith('/');
+    expect(replace).toHaveBeenCalledWith('/splash');
   });
 });

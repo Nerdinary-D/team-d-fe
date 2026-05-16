@@ -50,7 +50,7 @@ function ProfileIcon(props: TabIconProps) {
 
 const defaultItems = [
   {
-    href: '/spots/1',
+    href: '/mate',
     label: '메이트',
     icon: MateIcon,
     iconClassName: 'size-5',

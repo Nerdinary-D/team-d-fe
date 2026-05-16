@@ -1,3 +1,5 @@
+import { AuthGuard } from './_components/AuthGuard';
+
 export default function B2CLayout({
   children,
   tab,
@@ -12,5 +14,5 @@ export default function B2CLayout({
     </div>
   );
 
-  return layout;
+  return <AuthGuard>{layout}</AuthGuard>;
 }

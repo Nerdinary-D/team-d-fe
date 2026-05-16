@@ -8,7 +8,7 @@ vi.mock('next/navigation', () => ({
 
 describe('BottomTab', () => {
   it('현재 경로에 맞는 탭을 활성 상태로 표시한다', () => {
-    render(<BottomTab activePathname="/spots/1" />);
+    render(<BottomTab activePathname="/mate" />);
 
     expect(screen.getByRole('link', { name: '메이트' })).toHaveAttribute(
       'aria-current',
@@ -38,8 +38,8 @@ describe('BottomTab', () => {
 
 describe('isBottomTabItemActive', () => {
   it('하위 경로에서도 부모 탭을 활성 상태로 판단한다', () => {
-    expect(isBottomTabItemActive('/spots/1/map', '/spots/1')).toBe(true);
+    expect(isBottomTabItemActive('/mate/1', '/mate')).toBe(true);
     expect(isBottomTabItemActive('/my/settings', '/my')).toBe(true);
-    expect(isBottomTabItemActive('/spots/1', '/')).toBe(false);
+    expect(isBottomTabItemActive('/mate', '/')).toBe(false);
   });
 });
